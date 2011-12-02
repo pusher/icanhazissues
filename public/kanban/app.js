@@ -25,7 +25,6 @@ var Issue = function(issue){
   };
   
   if (issue.assignee){
-    console.log(issue.assignee)
     var avatar = $('<div class="avatar"><img src="'+issue.assignee.avatar_url+'" ></img>')
     avatar.css('-webkit-transform', 'rotate('+(-10 + Math.random() * 20) +'deg)')
     this.template.append(avatar)
@@ -35,12 +34,12 @@ var Issue = function(issue){
 $().ready(function(){
   var phases = [
     'ready',
-    'Development',
-    'staging',
+    'development',
     'review',
     'release',
     'done'
   ]
+  
   $('.columns').empty();
   for (var i=0; i < phases.length; i++) {
     $('.columns').append( new Column(phases[i], i).template );
@@ -50,18 +49,17 @@ $().ready(function(){
   $(window).resize(function(){
     $('.column').css('width', ($('body').width() / phases.length) + 'px')
   })
-  for (var i=0; i < issues.length; i++) {
-    if ( issues[i].milestone != null) {
-       
-      if (_.detect(issues[i].labels, function(a) { return a.name == 'Development' }) != null ){
-        $('#Development').append( new Issue( issues[i] ).template );
-      } else if (_.detect(issues[i].labels, function(a) { return a.name == 'Pending Release' }) != null ){
-        $('#release').append( new Issue( issues[i] ).template );
-      } else if (_.detect(issues[i].labels, function(a) { return a.name == 'Done' }) != null ){
-        $('#done').append( new Issue( issues[i] ).template );
-      } else {
-          $('#ready').append( new Issue( issues[i] ).template );
-      };
-    }
+  for (var i=0; i < issues.length; i++) {       
+    if (_.detect(issues[i].labels, function(a) { return a.name == 'development' }) != null ){
+      $('#development').append( new Issue( issues[i] ).template );
+    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'release' }) != null ){
+      $('#release').append( new Issue( issues[i] ).template );
+    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'ready' }) != null ){
+      $('#ready').append( new Issue( issues[i] ).template );
+    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'Done' }) != null ){
+      $('#done').append( new Issue( issues[i] ).template );
+    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'review' }) != null ){
+      $('#review').append( new Issue( issues[i] ).template );
+    };
   };
 })
