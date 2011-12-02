@@ -1,7 +1,6 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rubygems'
 require 'sinatra'
-require 'config'
 require 'sinatra_auth_github'
 
 class App < Sinatra::Base
