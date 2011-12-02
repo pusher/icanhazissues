@@ -22,6 +22,7 @@ class App < Sinatra::Base
   # end
 
   get '/' do
+    authenticate!
     "Hello There, <a href=\"/kanban/index.html\">Kan Ban</a>"
   end
   
