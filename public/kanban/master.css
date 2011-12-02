@@ -39,6 +39,10 @@ body {
   background-image: -webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.7));
   background-image: -moz-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.7));
 }
+.issue a {
+  text-decoration: none;
+  color: #000000;
+}
 .issue h4 {
   margin-bottom: 5px;
 }
