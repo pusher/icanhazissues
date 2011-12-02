@@ -11,9 +11,11 @@ var Issue = function(issue){
   this.template = $('#issue').clone();
   this.template.attr('id', null);
   this.template.find('h4').text(issue.title)
-  this.template.css('-webkit-transform', 'rotate('+(-5 + Math.random() * 10) +'deg)')
-  
-  
+
+  var rotate = 'rotate('+(-5 + Math.random() * 10) +'deg)'
+  this.template.css('-webkit-transform', rotate)
+  this.template.css('-moz-transform', rotate)
+
   for (var i=0; i < issue.labels.length; i++) {
     if (issue.labels[i].name == 'Bug'){
       this.template.addClass('bug')
@@ -26,7 +28,11 @@ var Issue = function(issue){
   
   if (issue.assignee){
     var avatar = $('<div class="avatar"><img src="'+issue.assignee.avatar_url+'" ></img>')
-    avatar.css('-webkit-transform', 'rotate('+(-10 + Math.random() * 20) +'deg)')
+
+    var rotate = 'rotate('+(-10 + Math.random() * 20) +'deg)'
+    avatar.css('-webkit-transform', rotate)
+    avatar.css('-moz-transform', rotate)
+
     this.template.append(avatar)
   }
 }

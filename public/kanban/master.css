@@ -35,7 +35,9 @@ body {
   background-color: #FFF7AD;
   position: relative;
   -webkit-box-shadow: 0px 2px 10px rgba(0,0,0, 0.5);
+  -moz-box-shadow: 0px 2px 10px rgba(0,0,0, 0.5);
   background-image: -webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.7));
+  background-image: -moz-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.7));
 }
 .issue h4 {
   margin-bottom: 5px;
@@ -62,7 +64,7 @@ body {
   height: 40px;
   background: white;
   -webkit-box-shadow: 0px 5px 3px rgba(0,0,0, 0.2);
-  
+  -moz-box-shadow: 0px 5px 3px rgba(0,0,0, 0.2);
 }
 .issue .avatar img {
   width: 100%;
