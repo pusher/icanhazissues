@@ -35,6 +35,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  multi_json
   rack
   sinatra
   sinatra_auth_github
