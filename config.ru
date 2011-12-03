@@ -2,6 +2,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rubygems'
 require 'sinatra'
 require 'sinatra_auth_github'
+require 'multi_json'
 
 class App < Sinatra::Base
   enable :sessions
@@ -15,11 +16,46 @@ class App < Sinatra::Base
 
   register Sinatra::Auth::Github
 
-  # helpers do
-  #   def repos
-  #     github_request("user/repos")
-  #   end
-  # end
+  helpers do
+    def repos
+      github_request("user/repos")
+    end
+    
+    def remove_old_labels(issue)
+      issue['labels'].each do |label|
+        if App::COLUMNS.include?(label['name']) 
+          path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels/#{label['name']}"
+          RestClient.delete("https://api.github.com/#{path}", :params => { :access_token => github_user.token }, :accept => :json)
+        end
+      end
+    end
+    
+    def add_label(issue, label)
+      path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels"
+      RestClient.post("https://api.github.com/#{path}", [label].to_json, :params => { :access_token => github_user.token }, :accept => :json)
+    end
+    
+
+    def github_raw_request(path, params={})
+      RestClient.get("https://api.github.com/#{path}", :params => { :access_token => github_user.token }.merge(params), :accept => :json)
+    end
+
+    def github_request(path, params={})
+      JSON.parse(github_raw_request(path, params))
+    end
+  end
+  
+  COLUMNS = [
+    'ready',
+    'development',
+    'done',
+    'review',
+    'release',
+    'Done'
+  ]
+  
+  OWNER = 'pusher'
+  REPO = 'pusher-server'
 
   get '/' do
     authenticate!
@@ -28,19 +64,17 @@ class App < Sinatra::Base
   
   get '/issues.json' do
     authenticate!
-    return 'var issues = ' + github_request('repos/pusher/pusher-server/issues').to_json
+    return 'var issues = ' + github_request("repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
   end
-
-  # get '/orgs/:id' do
-  #   github_public_organization_authenticate!(params['id'])
-  #   "Hello There, #{github_user.name}! You have access to the #{params['id']} organization."
-  # end
-
-  # the scopes above need to include repo for team access :(
-  # get '/teams/:id' do
-  #   github_team_authenticate!(params['id'])
-  #   "Hello There, #{github_user.name}! You have access to the #{params['id']} team."
-  # end
+  
+  post '/set_phase/:num' do
+    authenticate!
+    puts "repos/#{OWNER}/#{REPO}/issues/#{params['num']}"
+    issue = github_request("repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
+    remove_old_labels(issue)
+    add_label(issue, params['label'])
+    return 'success'
+  end
 
   get '/logout' do
     logout!

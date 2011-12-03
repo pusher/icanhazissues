@@ -1,15 +1,43 @@
+var setPhase = function(id, phase){
+  $.ajax({
+    url: '/set_phase/'+id,
+    type: 'POST',
+    data: {label: phase},
+    error: function(data){
+      alert('error')
+    }
+  })
+}
+
 var Column = function(phaseName, i){
   this.template = $('#column').clone();
   this.template.attr('id', null);
   this.template.find('h3').text(phaseName)
-  this.template.find('.area').attr('id', phaseName)
+  this.template.find('.area')
+    .attr('id', phaseName)
+    .height('500px')
   if (i % 2 == 0)
     this.template.addClass('odd')
+    
+  this.template.find('.area').droppable({
+		hoverClass: "ui-state-hover",
+		drop: function( event, ui ) {
+		  $(this).append(ui.draggable)
+		  // anoying to have to reset css manually :/
+		  ui.draggable.css({
+		    position: 'relative',
+		    left: 'auto',
+		    top: 'auto'
+		  })
+			setPhase(ui.draggable.data('number'), phaseName)
+		}
+	});
 }
 
 var Issue = function(issue){
   this.template = $('#issue').clone();
-  this.template.attr('id', null);
+  this.template.attr('id', issue.id);
+  this.template.data('number', issue.number);
   this.template.find('h4').text(issue.title)
   this.template.find('a')[0].href = issue.html_url
 
@@ -69,4 +97,6 @@ $().ready(function(){
       $('#review').append( new Issue( issues[i] ).template );
     };
   };
+  
+  $('.issue').draggable()
 })
