@@ -80,10 +80,7 @@ $().ready(function(){
     $('.columns').append( new Column(phases[i], i).template );
   };
 
-  $('.column').css('width', ($('body').width() / phases.length) + 'px')
-  $(window).resize(function(){
-    $('.column').css('width', ($('body').width() / phases.length) + 'px')
-  })
+  $('.column').css('width', (100 / phases.length) + '%')
   for (var i=0; i < issues.length; i++) {       
     if (_.detect(issues[i].labels, function(a) { return a.name == 'development' }) != null ){
       $('#development').append( new Issue( issues[i] ).template );
