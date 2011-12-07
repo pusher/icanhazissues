@@ -91,7 +91,7 @@ $().ready(function(){
       $('#release').append( new Issue( issues[i] ).template );
     } else if (_.detect(issues[i].labels, function(a) { return a.name == 'ready' }) != null ){
       $('#ready').append( new Issue( issues[i] ).template );
-    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'Done' }) != null ){
+    } else if (_.detect(issues[i].labels, function(a) { return a.name == 'done' }) != null ){
       $('#done').append( new Issue( issues[i] ).template );
     } else if (_.detect(issues[i].labels, function(a) { return a.name == 'review' }) != null ){
       $('#review').append( new Issue( issues[i] ).template );

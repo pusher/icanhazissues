@@ -51,7 +51,7 @@ class App < Sinatra::Base
     'done',
     'review',
     'release',
-    'Done'
+    'done'
   ]
   
   OWNER = 'pusher'
