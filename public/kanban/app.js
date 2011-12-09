@@ -1,3 +1,7 @@
+var recalcHeight = function() {
+  $('.columns .column').height($('.columns').height());
+}
+
 var setPhase = function(id, phase){
   $.ajax({
     url: '/set_phase/'+id,
@@ -15,7 +19,6 @@ var Column = function(phaseName, i){
   this.template.find('h3').text(phaseName)
   this.template.find('.area')
     .attr('id', phaseName)
-    .height('500px')
   if (i % 2 == 0)
     this.template.addClass('odd')
     
@@ -74,11 +77,12 @@ $().ready(function(){
     'release',
     'done'
   ]
-  
+
   $('.columns').empty();
   for (var i=0; i < phases.length; i++) {
     $('.columns').append( new Column(phases[i], i).template );
   };
+  $('.columns').append('<div class="clearfix"></div>')
 
   $('.column').css('width', (100 / phases.length) + '%')
   for (var i=0; i < issues.length; i++) {       
@@ -94,6 +98,8 @@ $().ready(function(){
       $('#review').append( new Issue( issues[i] ).template );
     };
   };
-  
+
+  recalcHeight();
+
   $('.issue').draggable()
 })
