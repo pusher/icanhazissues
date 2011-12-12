@@ -1,5 +1,16 @@
+var max = function() {
+  var args = Array.prototype.slice.call(arguments);
+  return args.reduce(function(a, b) {
+    if (a > b) {
+      return a;
+    } else {
+      return b;
+    }
+  })
+}
+
 var recalcHeight = function() {
-  $('.columns .column').height($('.columns').height());
+  $('.columns .column').height(max($('.columns').height(), $(document).height() * 0.99));
 }
 
 var setPhase = function(id, phase){
