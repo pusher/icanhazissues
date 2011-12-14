@@ -74,6 +74,24 @@ class App < Sinatra::Base
     return 'var issues = ' + github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
   end
   
+  get '/done.txt' do
+    authenticate!
+    @issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", {
+      :state => "open",
+      :labels => "done"
+    })
+
+    report = ""
+    @issues.sort_by { |i| i["number"] }.each do |issue|
+      report << "#{issue["number"]}: #{issue["title"]}\n"
+      report << "https://github.com/pusher/pusher-server/issues/#{issue['number']}\n"
+      report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
+      report << "\n"
+    end
+
+    return '<pre>' + report + '</pre>'
+  end
+
   post '/set_phase/:num' do
     authenticate!
     puts "repos/#{OWNER}/#{REPO}/issues/#{params['num']}"
