@@ -18,30 +18,37 @@ class App < Sinatra::Base
 
   helpers do
     def repos
-      github_request("user/repos")
+      github_request(:get, "user/repos")
     end
     
     def remove_old_labels(issue)
       issue['labels'].each do |label|
         if App::COLUMNS.include?(label['name']) 
           path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels/#{label['name']}"
-          RestClient.delete("https://api.github.com/#{path}", :params => { :access_token => github_user.token }, :accept => :json)
+          github_raw_request(:delete, path, nil)
         end
       end
     end
     
     def add_label(issue, label)
       path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels"
-      RestClient.post("https://api.github.com/#{path}", [label].to_json, :params => { :access_token => github_user.token }, :accept => :json)
+      github_raw_request(:post, path, [label].to_json)
     end
     
 
-    def github_raw_request(path, params={})
-      RestClient.get("https://api.github.com/#{path}", :params => { :access_token => github_user.token }.merge(params), :accept => :json)
+    def github_raw_request(verb, path, body = nil, params={})
+      url = "https://api.github.com/#{path}"
+      params = {:access_token => github_user.token}.merge(params)
+      case verb
+      when :get, :delete, :head
+        RestClient.send(verb, url, :params => params, :accept => :json)
+      else
+        RestClient.send(verb, url, body, :params => params, :accept => :json)
+      end
     end
 
-    def github_request(path, params={})
-      JSON.parse(github_raw_request(path, params))
+    def github_request(verb, path, params={})
+      JSON.parse(github_raw_request(verb, path, nil, params))
     end
   end
   
@@ -64,13 +71,13 @@ class App < Sinatra::Base
   
   get '/issues.json' do
     authenticate!
-    return 'var issues = ' + github_request("repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
+    return 'var issues = ' + github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
   end
   
   post '/set_phase/:num' do
     authenticate!
     puts "repos/#{OWNER}/#{REPO}/issues/#{params['num']}"
-    issue = github_request("repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
+    issue = github_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
     remove_old_labels(issue)
     add_label(issue, params['label'])
     return 'success'
