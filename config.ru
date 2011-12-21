@@ -4,6 +4,18 @@ require 'sinatra'
 require 'sinatra_auth_github'
 require 'multi_json'
 
+COLUMNS = [
+  'ready',
+  'development',
+  'done',
+  'review',
+  'release',
+  'done'
+]
+
+OWNER = 'pusher'
+REPO = 'pusher-server'
+
 class App < Sinatra::Base
   enable :sessions
   set :public, File.join(File.dirname(__FILE__), 'public')
@@ -17,10 +29,6 @@ class App < Sinatra::Base
   register Sinatra::Auth::Github
 
   helpers do
-    def repos
-      github_request("user/repos")
-    end
-    
     def remove_old_labels(issue)
       issue['labels'].each do |label|
         if App::COLUMNS.include?(label['name']) 
@@ -44,18 +52,6 @@ class App < Sinatra::Base
       JSON.parse(github_raw_request(path, params))
     end
   end
-  
-  COLUMNS = [
-    'ready',
-    'development',
-    'done',
-    'review',
-    'release',
-    'done'
-  ]
-  
-  OWNER = 'pusher'
-  REPO = 'pusher-server'
 
   get '/' do
     authenticate!
