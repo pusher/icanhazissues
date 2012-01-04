@@ -76,6 +76,7 @@ body {
 } 
 .area {
   margin: 5px;
+  min-height:500px;
 }
 .ui-state-hover {
   background: yellow;

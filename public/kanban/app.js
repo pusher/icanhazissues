@@ -10,7 +10,8 @@ var max = function() {
 }
 
 var recalcHeight = function() {
-  $('.columns .column').height(max($('.columns').height(), $(document).height() * 0.99));
+  var h = max($('.columns').height(), $(document).height() * 0.99);
+  $('.columns .column').height(h);
 }
 
 var setPhase = function(id, phase){
