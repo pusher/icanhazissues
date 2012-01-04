@@ -34,18 +34,18 @@ var Column = function(phaseName, i){
     this.template.addClass('odd')
     
   this.template.find('.area').droppable({
-		hoverClass: "ui-state-hover",
-		drop: function( event, ui ) {
-		  $(this).append(ui.draggable)
-		  // anoying to have to reset css manually :/
-		  ui.draggable.css({
-		    position: 'relative',
-		    left: 'auto',
-		    top: 'auto'
-		  })
-			setPhase(ui.draggable.data('number'), phaseName)
-		}
-	});
+    hoverClass: "ui-state-hover",
+    drop: function( event, ui ) {
+      $(this).append(ui.draggable)
+      // anoying to have to reset css manually :/
+      ui.draggable.css({
+        position: 'relative',
+        left: 'auto',
+        top: 'auto'
+      })
+      setPhase(ui.draggable.data('number'), phaseName)
+    }
+  });
 }
 
 var Issue = function(issue){
