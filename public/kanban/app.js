@@ -1,3 +1,19 @@
+var max = function() {
+  var args = Array.prototype.slice.call(arguments);
+  return args.reduce(function(a, b) {
+    if (a > b) {
+      return a;
+    } else {
+      return b;
+    }
+  })
+}
+
+var recalcHeight = function() {
+  var h = max($('.columns').height(), $(document).height() * 0.99);
+  $('.columns .column').height(h);
+}
+
 var setPhase = function(id, phase){
   $.ajax({
     url: '/set_phase/'+id,
@@ -15,23 +31,22 @@ var Column = function(phaseName, i){
   this.template.find('h3').text(phaseName)
   this.template.find('.area')
     .attr('id', phaseName)
-    .height('500px')
   if (i % 2 == 0)
     this.template.addClass('odd')
     
   this.template.find('.area').droppable({
-		hoverClass: "ui-state-hover",
-		drop: function( event, ui ) {
-		  $(this).append(ui.draggable)
-		  // anoying to have to reset css manually :/
-		  ui.draggable.css({
-		    position: 'relative',
-		    left: 'auto',
-		    top: 'auto'
-		  })
-			setPhase(ui.draggable.data('number'), phaseName)
-		}
-	});
+    hoverClass: "ui-state-hover",
+    drop: function( event, ui ) {
+      $(this).append(ui.draggable)
+      // anoying to have to reset css manually :/
+      ui.draggable.css({
+        position: 'relative',
+        left: 'auto',
+        top: 'auto'
+      })
+      setPhase(ui.draggable.data('number'), phaseName)
+    }
+  });
 }
 
 var Issue = function(issue){
@@ -74,11 +89,12 @@ $().ready(function(){
     'release',
     'done'
   ]
-  
+
   $('.columns').empty();
   for (var i=0; i < phases.length; i++) {
     $('.columns').append( new Column(phases[i], i).template );
   };
+  $('.columns').append('<div class="clearfix"></div>')
 
   $('.column').css('width', (100 / phases.length) + '%')
   for (var i=0; i < issues.length; i++) {       
@@ -94,6 +110,8 @@ $().ready(function(){
       $('#review').append( new Issue( issues[i] ).template );
     };
   };
-  
+
+  recalcHeight();
+
   $('.issue').draggable()
 })

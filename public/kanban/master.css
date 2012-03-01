@@ -13,7 +13,6 @@ body {
 
 .columns .column {
   float: left;
-  height: 100%;
 }
 
 .columns .column h3 {
@@ -77,7 +76,29 @@ body {
 } 
 .area {
   margin: 5px;
+  min-height:500px;
 }
 .ui-state-hover {
   background: yellow;
+}
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  clear: both;
+  visibility: hidden;
+  line-height: 0;
+  height: 0;
+}
+ 
+.clearfix {
+  display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+  display: block;
+}
+ 
+* html .clearfix {
+  height: 1%;
 }
