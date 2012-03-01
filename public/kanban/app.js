@@ -67,7 +67,6 @@ var Issue = function(issue){
     if (issue.labels[i].name == 'Blocked'){
       this.template.addClass('blocked')
     }
-    this.template.find('.labels').append( '<span class="label">'+issue.labels[i].name +'</span>');
   };
   
   if (issue.assignee){
