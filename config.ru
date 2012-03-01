@@ -19,6 +19,7 @@ REPO = 'pusher-server'
 class App < Sinatra::Base
   enable :sessions
   set :public_folder, File.join(File.dirname(__FILE__), 'public')
+  set :public, File.join(File.dirname(__FILE__), 'public')
 
   set :github_options, {
                           :secret    => '1bbeb9a0e978fc9596b0cafff75295d7908e5122',
