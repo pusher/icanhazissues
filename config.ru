@@ -57,7 +57,7 @@ class App < Sinatra::Base
     end
 
     def github_request(verb, path, params={})
-      JSON.parse(github_raw_request(verb, path, nil, params))
+      MultiJson.load(github_raw_request(verb, path, nil, params))
     end
   end
 
@@ -68,7 +68,8 @@ class App < Sinatra::Base
   
   get '/issues.json' do
     authenticate!
-    return 'var issues = ' + github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
+    issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 })
+    return "var issues = #{MultiJson.dump(issues)}"
   end
   
   get '/done.txt' do
