@@ -41,7 +41,7 @@ class App < Sinatra::Base
     
     def add_label(issue, label)
       path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels"
-      github_raw_request(:post, path, [label].to_json)
+      github_raw_request(:post, path, MultiJson.dump([label]))
     end
     
 
