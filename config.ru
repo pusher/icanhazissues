@@ -66,9 +66,10 @@ class App < Sinatra::Base
     "Hello There, <a href=\"/kanban/index.html\">Kan Ban</a>"
   end
   
-  get '/issues.json' do
+  get '/issues.js' do
     authenticate!
     issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 })
+    content_type "application/javascript"
     return "var issues = #{MultiJson.dump(issues)}"
   end
   
