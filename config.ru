@@ -42,7 +42,7 @@ class App < Sinatra::Base
     
     def add_label(issue, label)
       path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels"
-      github_raw_request(:post, path, [label].to_json)
+      github_raw_request(:post, path, MultiJson.dump([label]))
     end
     
 
@@ -58,7 +58,7 @@ class App < Sinatra::Base
     end
 
     def github_request(verb, path, params={})
-      JSON.parse(github_raw_request(verb, path, nil, params))
+      MultiJson.load(github_raw_request(verb, path, nil, params))
     end
   end
 
@@ -67,9 +67,11 @@ class App < Sinatra::Base
     "Hello There, <a href=\"/kanban/index.html\">Kan Ban</a>"
   end
   
-  get '/issues.json' do
+  get '/issues.js' do
     authenticate!
-    return 'var issues = ' + github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 }).to_json
+    issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 })
+    content_type "application/javascript"
+    return "var issues = #{MultiJson.dump(issues)}"
   end
   
   get '/done.txt' do
