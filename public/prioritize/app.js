@@ -8,7 +8,7 @@ Handler.prototype.emit = function(event, data){
   this.events[event](data)
 }
 
-var Issue = function(issue){
+var IssueView = function(issue){
   this.template = $('#issue').clone();
   this.template.attr('id', null);
   this.template.find('h4 a').text(issue.title)
@@ -42,22 +42,22 @@ var Issue = function(issue){
   this.template.handler = new Handler()
 }
 
-var draggable;
-$().ready(function(){
-  
-  redraw();
-  
-  $('.all').data('phase', '')
-  $('.ready').data('phase', 'ready')
-  $('.priority').data('phase', 'priority')
-  
-  $('.column').droppable({
+var ColumnView = function(el, phase){
+  el.data('phase', phase)
+  el.droppable({
+    accept: function(el){
+      var id = $(el).attr('id');
+      if ($(this).data('phase') == '' && hasNoLabel(issueHash[id]) )
+        return false
+      return !hasLabel(issueHash[id], $(this).data('phase'))
+    },
     drop: function( event, ui ) {
       var phase = $(this).data('phase')
       var id = $(ui.draggable).attr('id')
       var number = $(ui.draggable).data('number')
+      $(this).removeClass('over')
       setPhase(number, phase, function(){
-        $(this).removeClass('over')
+        // callback?
       })
   		issues = _.reject(issues, function(issue){ return issue.id == id; });
   		$(ui.draggable).css({ left: 0, top: 0})
@@ -70,11 +70,16 @@ $().ready(function(){
       $(this).removeClass('over')
   	}
   })
+}
+
+var draggable;
+$().ready(function(){
   
-  $('.drop').scroll(function(event){
-    event.stopPropagation();
-    return false;
-  })
+  redraw();
+  
+  new ColumnView($('.all'), '')
+  new ColumnView($('.ready'), 'ready')
+  new ColumnView($('.priority'), 'priority')
 })
 
 var setPhase = function(id, phase, callback){
@@ -89,13 +94,22 @@ var setPhase = function(id, phase, callback){
   })
 }
 
+function hasLabel(issue, label){
+  return (_.detect(issue.labels, function(a) { return a.name == label }) != null )
+}
+
+function hasNoLabel(issue){
+  return (issue.labels.length < 1)
+}
+
+var issueHash = {};
 function redraw(){
-  
   issues.forEach(function(issueData){
-    var issue = new Issue( issueData )
-    if (_.detect(issueData.labels, function(a) { return a.name == 'priority' }) != null ){
+    issueHash[issueData.id] = issueData;
+    var issue = new IssueView( issueData )
+    if (hasLabel(issueData, 'priority')){
       $('.priority .drop').append( issue.template );
-    } else if (_.detect(issueData.labels, function(a) { return a.name == 'ready' }) != null ){
+    } else if (hasLabel(issueData, 'ready')){
       $('.ready .drop').append( issue.template );
     } else {
       $('.all .drop').append( issue.template );
