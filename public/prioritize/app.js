@@ -99,7 +99,10 @@ function hasLabel(issue, label){
 }
 
 function hasNoLabel(issue){
-  return (issue.labels.length < 1)
+  return (issue.labels.length < 1 ||
+    !hasLabel(issue, 'ready') ||
+    !hasLabel(issue, 'priority')
+  )
 }
 
 var issueHash = {};
