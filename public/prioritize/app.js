@@ -74,9 +74,7 @@ var ColumnView = function(el, phase){
 
 var draggable;
 $().ready(function(){
-  
   redraw();
-  
   new ColumnView($('.all'), '')
   new ColumnView($('.ready'), 'ready')
   new ColumnView($('.priority'), 'priority')
@@ -99,14 +97,26 @@ function hasLabel(issue, label){
 }
 
 function hasNoLabel(issue){
-  return (issue.labels.length < 1 ||
-    !hasLabel(issue, 'ready') ||
-    !hasLabel(issue, 'priority')
-  )
+  return (issue.labels.length < 1 || doesntHaveLabel(issue, ['ready', 'priority']))
 }
+
+function doesntHaveLabel(issue, excludeLabels){
+  var labels =  _.map(issue.labels, function(l){ return l.name }) ;
+  return (_.intersection(excludeLabels, labels).length < 1 )
+}
+
+var EXCLUDED_LABELS = [
+  'done',
+  'review',
+  'release'
+]
 
 var issueHash = {};
 function redraw(){
+  issues = _.filter(issues, function(issue){ 
+    var labels =  _.map(issue.labels, function(l){ return l.name }) ;
+    return (_.intersection(EXCLUDED_LABELS, labels).length < 1 )
+  });  
   issues.forEach(function(issueData){
     issueHash[issueData.id] = issueData;
     var issue = new IssueView( issueData )
