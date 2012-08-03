@@ -1,0 +1,33 @@
+.issue {
+  position:relative;
+  float: left;
+  width: 7em;
+  font-size: 0.7em;
+  height: 50px;
+}
+.column {
+  float: left;
+  width: 20%;
+  background: #E0FFDA;
+  height: 100%;
+}
+.all {
+  width: 60%;
+}
+.ready {
+  background: #D1F2FF;
+}
+.priority {
+  background: #FFCDDC;
+}
+.over {
+  background: #FCFFD4;
+}
+.drop {
+  height: 90%;
+  overflow: scroll;
+}
+#test {
+  z-index: 20;
+  position: absolute;
+}

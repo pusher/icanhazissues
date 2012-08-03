@@ -3,11 +3,11 @@ require 'rubygems'
 require 'sinatra'
 require 'sinatra_auth_github'
 require 'multi_json'
+require 'github_creds'
 
 COLUMNS = [
   'ready',
   'development',
-  'done',
   'review',
   'release',
   'done'
@@ -19,13 +19,8 @@ REPO = 'pusher-server'
 class App < Sinatra::Base
   enable :sessions
   set :public_folder, File.join(File.dirname(__FILE__), 'public')
-  set :public, File.join(File.dirname(__FILE__), 'public')
 
-  set :github_options, {
-                          :secret    => '1bbeb9a0e978fc9596b0cafff75295d7908e5122',
-                          :client_id => 'fe06d7535dae3eda2aaf',
-                          :scopes => ['repo']
-                       }
+  set :github_options, GITHUB_CREDS
 
   register Sinatra::Auth::Github
 
@@ -94,10 +89,11 @@ class App < Sinatra::Base
 
   post '/set_phase/:num' do
     authenticate!
-    puts "repos/#{OWNER}/#{REPO}/issues/#{params['num']}"
     issue = github_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
     remove_old_labels(issue)
-    add_label(issue, params['label'])
+    if params['label'] != ""
+      add_label(issue, params['label'])
+    end
     return 'success'
   end
 
