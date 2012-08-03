@@ -5,6 +5,10 @@
   font-size: 0.7em;
   height: 50px;
 }
+.issue h4 a {
+  text-decoration: none;
+  color: #000000;
+}
 .column {
   float: left;
   width: 20%;

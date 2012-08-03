@@ -11,7 +11,8 @@ Handler.prototype.emit = function(event, data){
 var Issue = function(issue){
   this.template = $('#issue').clone();
   this.template.attr('id', null);
-  this.template.find('h4').text(issue.title)
+  this.template.find('h4 a').text(issue.title)
+  this.template.find('h4 a').attr('href',  issue.html_url)
   this.template.css('-webkit-transform', 'rotate('+(-5 + Math.random() * 10) +'deg)')
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
