@@ -108,7 +108,8 @@ function doesntHaveLabel(issue, excludeLabels){
 var EXCLUDED_LABELS = [
   'done',
   'review',
-  'release'
+  'release',
+  'development'
 ]
 
 var issueHash = {};
