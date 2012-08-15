@@ -10,7 +10,8 @@ COLUMNS = [
   'development',
   'review',
   'release',
-  'done'
+  'done',
+  'priority'
 ]
 
 OWNER = 'pusher'
