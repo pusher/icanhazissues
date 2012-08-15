@@ -18,10 +18,10 @@ var IssueView = function(issue){
   this.template.data('number', issue.number);
   
   for (var i=0; i < issue.labels.length; i++) {
-    if (issue.labels[i].name == 'Bug'){
+    if (issue.labels[i].name == 'bug'){
       this.template.addClass('bug')
     }
-    if (issue.labels[i].name == 'Blocked'){
+    if (issue.labels[i].name == 'blocked'){
       this.template.addClass('blocked')
     }
   };

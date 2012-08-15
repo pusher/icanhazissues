@@ -61,10 +61,10 @@ var Issue = function(issue){
   this.template.css('-moz-transform', rotate)
 
   for (var i=0; i < issue.labels.length; i++) {
-    if (issue.labels[i].name == 'Bug'){
+    if (issue.labels[i].name == 'bug'){
       this.template.addClass('bug')
     }
-    if (issue.labels[i].name == 'Blocked'){
+    if (issue.labels[i].name == 'blocked'){
       this.template.addClass('blocked')
     }
   };
