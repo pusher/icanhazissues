@@ -78,6 +78,9 @@ $().ready(function(){
   new ColumnView($('.all'), '')
   new ColumnView($('.ready'), 'ready')
   new ColumnView($('.priority'), 'priority')
+  $('#labelFilter').change(function(){
+    redraw( $(this).val() )
+  })
 })
 
 var setPhase = function(id, phase, callback){
@@ -113,12 +116,18 @@ var EXCLUDED_LABELS = [
 ]
 
 var issueHash = {};
-function redraw(){
-  issues = _.filter(issues, function(issue){ 
+function redraw(filter){
+  $('.drop').empty();
+  var newIssues = _.filter(issues, function(issue){ 
     var labels =  _.map(issue.labels, function(l){ return l.name }) ;
     return (_.intersection(EXCLUDED_LABELS, labels).length < 1 )
   });  
-  issues.forEach(function(issueData){
+  if (filter && filter != 'all' ){
+    newIssues = _.filter(newIssues, function(issue){
+      return hasLabel(issue, filter)
+    })
+  }
+  newIssues.forEach(function(issueData){
     issueHash[issueData.id] = issueData;
     var issue = new IssueView( issueData )
     if (hasLabel(issueData, 'priority')){

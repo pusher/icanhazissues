@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="app.css" type="text/css" media="screen">
 </head>
 <body>
-  <div id="test"></div>
 
   <div class="all column">
     <h3>Backlog</h3>
@@ -24,6 +23,16 @@
   
   <div class="ready column"><h3>Ready</h3>  
     <div class="drop"></div>
+  </div>
+  
+  <div id="controlBoard">
+    <select id="labelFilter">
+      <option value="all">All</option>
+      <option value="bug">Bug</option>
+      <option value="blocked">Blocked</option>
+      <option value="infra">Infrastructure</option>
+      <option value="product">Product</option>
+    </select>
   </div>
   
   <div id="templates">
