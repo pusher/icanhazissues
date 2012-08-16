@@ -9,9 +9,8 @@ var IssueView = function(issue){
   this.template.data('number', issue.number);
   
   issue.labels.forEach(function(label){
-    if (label.name == 'bug' || label.name == 'blocked'){
+    if (_.detect(DECORATIVE_LABELS, function(dl){ return dl.name == label.name }) != null){
       self.template.addClass(label)
-    } else if (_.detect(DECORATIVE_LABELS, function(dl){ return dl.name == label.name }) != null){
       self.template.find('.labels').append(new StickerView(label).html)
     }
   })
