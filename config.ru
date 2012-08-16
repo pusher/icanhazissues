@@ -35,12 +35,11 @@ class App < Sinatra::Base
         end
       end
     end
-    
-    def add_label(issue, label)
-      path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels"
+
+    def add_label(issue_num, label)
+      path = "repos/#{OWNER}/#{REPO}/issues/#{issue_num}/labels"
       github_raw_request(:post, path, MultiJson.dump([label]))
-    end
-    
+    end    
 
     def github_raw_request(verb, path, body = nil, params={})
       url = "https://api.github.com/#{path}"
@@ -62,7 +61,7 @@ class App < Sinatra::Base
     authenticate!
     "Hello There, <a href=\"/kanban/index.html\">Kan Ban</a>"
   end
-  
+
   get '/issues.js' do
     authenticate!
     issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 })
@@ -70,6 +69,13 @@ class App < Sinatra::Base
     return "var issues = #{MultiJson.dump(issues)}"
   end
   
+  get '/labels.js' do
+    authenticate!
+    labels = github_request(:get, "repos/#{OWNER}/#{REPO}/labels", { :per_page => 100 })
+    content_type "application/javascript"
+    return "var labels = #{MultiJson.dump(labels)}"
+  end
+
   get '/done.txt' do
     authenticate!
     @issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", {
@@ -88,13 +94,26 @@ class App < Sinatra::Base
     return '<pre>' + report + '</pre>'
   end
 
+  post '/issues' do
+    authenticate!
+    puts params['issue']
+    path = "repos/#{OWNER}/#{REPO}/issues"
+    return github_raw_request(:post, path, MultiJson.dump(params['issue']) )
+  end
+
   post '/set_phase/:num' do
     authenticate!
     issue = github_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
     remove_old_labels(issue)
     if params['label'] != ""
-      add_label(issue, params['label'])
+      add_label(params['num'], params['label'])
     end
+    return 'success'
+  end
+
+  post '/add_label/:num' do
+    authenticate!
+    add_label(params['num'], params['label'])
     return 'success'
   end
 

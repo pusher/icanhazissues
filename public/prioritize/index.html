@@ -2,40 +2,26 @@
 <head>
 	<title>Sorter</title>
 	<script src="/issues.js"></script>
+	<script src="/labels.js"></script>
   <script src="../lib/jquery-1.7.2.min.js"></script>
   <script src="../lib/jquery-ui-1.8.22.custom.min.js"></script>
   <script src="../lib/underscore.js"></script>
+  <script src="../utility/master.js"></script>
+  <script src="../views/issue_view.js"></script>
   <script src="app.js"></script>
   <link rel="stylesheet" href="master.css" type="text/css" media="screen">
   <link rel="stylesheet" href="app.css" type="text/css" media="screen">
 </head>
 <body>
-
-  <div class="all column">
-    <h3>Backlog</h3>
-    <div class="drop"></div>
-  </div>
+  <div class="columns"></div>
   
-  <div class="priority column">
-    <h3>Priority</h3>
-    <div class="drop"></div>
-  </div>
-  
-  <div class="ready column"><h3>Ready</h3>  
-    <div class="drop"></div>
-  </div>
-  
-  <div id="controlBoard">
-    <select id="labelFilter">
-      <option value="all">All</option>
-      <option value="bug">Bug</option>
-      <option value="blocked">Blocked</option>
-      <option value="infra">Infrastructure</option>
-      <option value="product">Product</option>
-    </select>
-  </div>
+  <div id="controlBoard"></div>
   
   <div id="templates">
+    <div id="columnTemplate" class="column">
+      <h3>Name</h3>
+      <div class="drop"></div>
+    </div>
     
     <div id="issue" class="issue">
       <h4><a>Issue</a></h4>
@@ -43,6 +29,23 @@
       <p class="labels"></p>
     </div>
     
+    <div id="issueFormTemplate" class="popupForm">
+      <form action="/issues" class="issueForm" method="POST">
+        <div><input name="issue[title]" id="issueTitle"></div>
+        <div><textarea name="issue[body]" id="issueBody"></textarea></div>
+        <div><input type="submit"></div>
+      </form>
+        
+    </div>
+    
+    <div id="controlBoardTemplate">
+      <div class="section">
+      <select id="labelFilter">
+      </select>
+      </div>
+
+      <div class="section" id="labelBar"></div>
+    </div>
   </div>
 </body>
 </html>
