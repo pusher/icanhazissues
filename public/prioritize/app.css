@@ -3,18 +3,10 @@
   float: left;
   width: 7em;
   font-size: 0.7em;
-  height: 50px;
-}
-.issue h4 {
-  word-wrap: break-word;
-}
-.issue h4 a {
-  text-decoration: none;
-  color: #000000;
+  height: 70px;
+  overflow: hidden !important;
 }
 .column {
-  float: left;
-  background: #E0FFDA;
   height: 100%;
 }
 .over {
@@ -23,62 +15,4 @@
 .drop {
   height: 93%;
   overflow: scroll;
-}
-#controlBoard {
-  z-index: 20;
-  position: absolute;
-  height: 30px;
-  bottom: 0;
-  left: 0;
-}
-#controlBoard .section {
-  float: left;
-}
-.labels {
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
-#labelBar .label {
-  display: block;
-  float: left;
-  padding: 2px;
-  font-size: 0.8em;
-  text-decoration: none;
-  color: #fff;
-}
-.sticker {
-  display: block;
-  width: 20px;
-  height: 5px;
-}
-.sticker.product,
-#labelBar .product{
-  background: green;
-}
-.sticker.infra,
-#labelBar .infra{
-  background: cyan;
-}
-.popupForm {
-  position: absolute;
-  top: 50px;
-  width: 60%;
-  left: 20%;
-  background: #fff;
-}
-.popupForm form div {
-  padding: 1em;
-}
-.popupForm input,
-.popupForm textarea {
-  font-size: 1.2em;
-}
-#issueBody {
-  width: 100%;
-  height: 150px;
-}
-#issueTitle {
-  width: 100%;
-  height: 30px;
 }

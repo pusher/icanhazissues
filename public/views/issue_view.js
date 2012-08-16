@@ -4,7 +4,7 @@ var IssueView = function(issue){
   this.template.attr('id', null);
   this.template.find('h4 a').text(issue.title)
   this.template.find('h4 a').attr('href',  issue.html_url)
-  this.template.css('-webkit-transform', 'rotate('+(-5 + Math.random() * 10) +'deg)')
+  this.template.css('-webkit-transform', 'rotate('+(-3 + Math.random() * 6) +'deg)')
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
   
@@ -38,6 +38,16 @@ var IssueView = function(issue){
     }
   })
   this.template.handler = new Handler()
+  
+  if (issue.assignee){
+    var avatar = $('<div class="avatar"><img src="'+issue.assignee.avatar_url+'" ></img>')
+
+    var rotate = 'rotate('+(-10 + Math.random() * 20) +'deg)'
+    avatar.css('-webkit-transform', rotate)
+    avatar.css('-moz-transform', rotate)
+
+    this.template.append(avatar)
+  }
 }
 
 var StickerView = function(label){
@@ -46,12 +56,14 @@ var StickerView = function(label){
 }
 
 var ColumnView = function(phase){
+  ColumnView.incrementor++;
   this.phase = phase.state;
   this.html = $('#columnTemplate').clone();
   this.html.attr('id', null);
   this.html.css('width', phase.width);
   this.html.find('h3').text((phase.state == "") ? 'All' : phase.state)
   this.html.addClass(phase.state)
+  this.html.addClass( ( ColumnView.incrementor % 2 == 0) ? 'odd' : 'even' )
   this.html.data('phase', phase.state)
   
   this.html.droppable({
@@ -85,6 +97,7 @@ var ColumnView = function(phase){
 ColumnView.prototype.addIssue = function(issue){
   this.html.find('.drop').append(issue.template)
 }
+ColumnView.incrementor = 0
 
 var LabelBarView = function(){
   var self = this;

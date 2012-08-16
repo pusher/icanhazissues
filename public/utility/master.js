@@ -8,15 +8,19 @@ Handler.prototype.emit = function(event, data){
   this.events[event](data)
 }
 
-function initIssues(options){
+function initIssues(issues, includeLabels, excludeLabels, includeBlank){
+  var newIssues = []
   issues.forEach(function(issueData){
-    if (hasNoLabel(issueData)){
-      issueData.state = ''
-    } else {
-      issueData.state = getLabel(issueData, options)
+    issueData.state = getLabel(issueData, includeLabels.concat(excludeLabels) )
+    if (
+      (issueData.state == '' && includeBlank) ||
+      (_.include(includeLabels, issueData.state))
+    ){
+      newIssues.push(issueData)
+      issueHash[issueData.id] = issueData;
     }
-    issueHash[issueData.id] = issueData;
   })
+  return newIssues;
 }
 
 var setPhase = function(id, phase, callback){
@@ -49,19 +53,11 @@ function getLabel(issue, potentialLabels){
       return potentialLabels[i]
     }
   };
+  return '';
 }
 
 function hasLabel(issue, label){
   return (_.detect(issue.labels, function(a) { return a.name == label }) != null )
-}
-
-function hasNoLabel(issue){
-  return (issue.labels.length < 1 || doesntHaveLabel(issue, ['ready', 'priority']))
-}
-
-function doesntHaveLabel(issue, excludeLabels){
-  var labels =  _.map(issue.labels, function(l){ return l.name }) ;
-  return (_.intersection(excludeLabels, labels).length < 1 )
 }
 
 function addIssues(issues){
@@ -82,9 +78,6 @@ function filteredIssues(filter){
   }
 }
 
-function allIssues(){
-  return _.filter(issues, function(issue){ 
-    var labels =  _.map(issue.labels, function(l){ return l.name }) ;
-    return (_.intersection(EXCLUDED_LABELS, labels).length < 1 )
-  });
+function allIssues(removeBlank){
+  return issues;
 }

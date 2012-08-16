@@ -4,7 +4,7 @@ var EXCLUDED_LABELS = [
   'release',
   'development'
 ]
-var ACTIVE_LABELS = ['priority', 'ready']
+var INCLUDED_LABELS = ['priority', 'ready']
 
 var DECORATIVE_LABELS = []
 var columns = {};
@@ -12,12 +12,12 @@ var columns = {};
 var issueHash = {};
 $().ready(function(){
   labels.forEach(function(label){
-    if (EXCLUDED_LABELS.concat(ACTIVE_LABELS).indexOf(label.name) == -1){
+    if (EXCLUDED_LABELS.concat(INCLUDED_LABELS).indexOf(label.name) == -1){
       DECORATIVE_LABELS.push(label)
     }
   })
   
-  initIssues(ACTIVE_LABELS)
+  issues = initIssues(issues, INCLUDED_LABELS, EXCLUDED_LABELS, true)
   var states = [
     { state: '', width: '60%' },
     { state: 'priority', width: '20%' },
