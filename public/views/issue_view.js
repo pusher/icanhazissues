@@ -22,7 +22,8 @@ var IssueView = function(issue){
     revert: 'invalid',
     helper: 'clone',
     start: function(evt, ui){
-      $(this).css('opacity', 0)
+      $(this).css('opacity', 0);
+      $(ui.helper).addClass('dragging')
     },
     stop: function(evt, ui){
       $(this).css('opacity', 1)

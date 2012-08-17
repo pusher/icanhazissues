@@ -9,9 +9,6 @@
 .column {
   height: 100%;
 }
-.over {
-  background: #FCFFD4;
-}
 .drop {
   height: 93%;
   overflow: scroll;
