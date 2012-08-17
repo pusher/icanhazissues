@@ -129,6 +129,25 @@ html[xmlns] .clearfix {
   font-size: 0.8em;
   text-decoration: none;
   color: #fff;
+  margin-right: 3px;
+}
+.showLabelFormBtn {
+  display: block;
+  width: 20px;
+  font-size: 1.5em;
+  line-height: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #222;
+}
+.section {
+  margin-right: 5px;
+}
+.newLabelForm input {
+  display: block;
+  float: left;
+  height: 20px;
+  margin-right: 3px;
 }
 .sticker {
   display: block;

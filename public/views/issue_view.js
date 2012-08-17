@@ -105,18 +105,44 @@ var LabelBarView = function(){
   this.html = $('#controlBoardTemplate').clone();
   this.html.attr('id', null)
   
+  this.addLabel = function(label){
+    var option = $('<option value="'+label.name+'">'+label.name+'</option>')
+    self.html.find('#labelFilter').append(option)
+    self.html.find('#labelBar').append( new LabelView(label).html )
+  }
+  
   var option = $('<option value="all">All</option>')
   this.html.find('#labelFilter').append(option)
   DECORATIVE_LABELS.forEach(function(label){
-    var option = $('<option value="'+label.name+'">'+label.name+'</option>')
-    self.html.find('#labelFilter').append(option)
+    self.addLabel(label)
   })
   this.html.find('#labelFilter').change(function(){
-    addIssues( filteredIssues( $(this).val() ) );
+    columnSet.addIssues( filteredIssues( $(this).val() ) );
   });
-  DECORATIVE_LABELS.forEach(function(label){
-    self.html.find('#labelBar').append( new LabelView(label).html )
+  
+  this.html.find('.showLabelFormBtn').click(function(){
+    self.html.find('.newLabelForm').show();
+    $(this).hide();
+    return false;
   })
+  this.html.find('.newLabelForm').hide()
+  this.html.find('.newLabelForm').submit(function(){
+    var form = this;
+    $.ajax({
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      type: $(this).attr('method'),
+      dataType: 'JSON',
+      success: function(label){
+        self.addLabel(label)
+        $(form)[0].reset();
+      },
+      error: function(){
+        alert('some sort of error has occurred.')
+      }
+    });
+    return false;
+  });
 }
 
 var LabelView = function(label){
@@ -131,24 +157,23 @@ var LabelView = function(label){
 
 
 var IssueFormView = function(){
+  var self = this;
   this.html = $('#issueFormTemplate').clone();
   this.html.attr('id', null);
   
-  // this.html.find('.issueForm').submit(function(){
-  //   $.ajax({
-  //     url: '/issues',
-  //     data: {
-  //       issue: {
-  //         body: $(this).find('#issueBody').val(),
-  //         title: $(this).find('#issueTitle').val(),
-  //       }
-  //     },
-  //     dataType: 'JSON',
-  //     success: function(issue){
-  //       console.log(issue)
-  //     },
-  //     type: 'POST'
-  //   })
-  //   return false;
-  // });
+  this.html.find('.issueForm').submit(function(){
+    var form = this;
+    $.ajax({
+      url: $(this).attr('action'),
+      data: $(this).serialize(),
+      type: $(this).attr('method'),
+      dataType: 'JSON',
+      success: function(issue){
+        self.html.remove();
+        issue.state = '';
+        columnSet.addIssue(issue);
+      }
+    });
+    return false;
+  });
 }

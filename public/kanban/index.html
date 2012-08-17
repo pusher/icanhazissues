@@ -45,6 +45,16 @@
       </div>
 
       <div class="section" id="labelBar"></div>
+      <div class="section">
+        <a href="#" class="showLabelFormBtn">+</a>
+      </div>
+      <div class="section" class="newLabel">
+        <form action="/labels" class="newLabelForm" method="POST">
+          <input name="label[name]">
+          <input name="label[color]" type="color" value="#ff0000">
+          <input type="submit">
+        </form>
+      </div>
     </div>
   </div>
 </body>

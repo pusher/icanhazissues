@@ -8,19 +8,47 @@ Handler.prototype.emit = function(event, data){
   this.events[event](data)
 }
 
-function initIssues(issues, includeLabels, excludeLabels, includeBlank){
-  var newIssues = []
+var ColumnSet = function(states){
+  this._columns = {}
+  var self = this;
+  
+  states.forEach(function(state){
+    var c = new ColumnView(state)
+    self._columns[state.state] = c
+    $('.columns').append(c.html)
+  })
+}
+ColumnSet.prototype.addIssue = function(issue){
+  if (this._columns[issue.state])
+    this._columns[issue.state].addIssue( new IssueView( issue ) );
+}
+
+ColumnSet.prototype.addIssues = function(issues){
+  $('.drop').empty();  
+  var self = this;
   issues.forEach(function(issueData){
-    issueData.state = getLabel(issueData, includeLabels.concat(excludeLabels) )
-    if (
-      (issueData.state == '' && includeBlank) ||
-      (_.include(includeLabels, issueData.state))
-    ){
-      newIssues.push(issueData)
-      issueHash[issueData.id] = issueData;
+    self.addIssue(issueData)
+  })
+};
+
+function initLabels(labels, allLabels){
+  return _.filter(labels, function(label){
+    if (allLabels.indexOf(label.name) == -1){
+      return label
     }
   })
-  return newIssues;
+}
+
+function addStateToIssues(issues, allLabels){
+  issues.forEach(function(issueData){
+    issueData.state = getLabel(issueData, allLabels )
+  })
+}
+
+function initIssueHash(issues){
+  issues.forEach(function(issue){
+    issueHash[issue.id] = issue;
+  })
 }
 
 var setPhase = function(id, phase, callback){
@@ -60,14 +88,6 @@ function hasLabel(issue, label){
   return (_.detect(issue.labels, function(a) { return a.name == label }) != null )
 }
 
-function addIssues(issues){
-  $('.drop').empty();  
-  issues.forEach(function(issueData){
-    var issue = new IssueView( issueData )
-    columns[issueData.state].addIssue( issue );
-  })
-}
-
 function filteredIssues(filter){
   if (filter && filter != 'all' ){
     return _.filter(allIssues(), function(issue){
@@ -81,3 +101,17 @@ function filteredIssues(filter){
 function allIssues(removeBlank){
   return issues;
 }
+
+function allowPopup(){
+  var popupForm = null
+  $(document).keydown(function(evt){
+    if (evt.keyCode == 78 && popupForm == null){
+      popupForm = new IssueFormView()
+      $('body').append(popupForm.html)
+    }
+    if (evt.keyCode == 27 && popupForm != null){
+      popupForm.html.remove();
+      popupForm = null
+    }
+  })
+} 

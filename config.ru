@@ -117,6 +117,12 @@ class App < Sinatra::Base
     return 'success'
   end
 
+  post '/labels' do
+    authenticate!
+    params['label']['color'].gsub!(/^#/, '')
+    return github_raw_request(:post, "repos/#{OWNER}/#{REPO}/labels", MultiJson.dump(params['label']))
+  end
+
   get '/logout' do
     logout!
     redirect 'https://github.com'
