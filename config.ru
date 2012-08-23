@@ -27,6 +27,21 @@ class App < Sinatra::Base
 
   helpers do
 
+    def fetch_issues
+      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, { :per_page => 100 })
+      pag(response)
+    end
+    
+    def pag(response)
+      new_issues = MultiJson.load(response)
+      if new_issues.length == 100
+        next_link = response.headers[:link].gsub(/^\<([^>]+)\>.*$/, "\\1")
+        new_issues + pag(RestClient.get(next_link))
+      else
+        new_issues
+      end
+    end
+    
     def remove_old_labels(issue)
       issue['labels'].each do |label|
         if App::COLUMNS.include?(label['name']) 
@@ -64,7 +79,7 @@ class App < Sinatra::Base
 
   get '/issues.js' do
     authenticate!
-    issues = github_request(:get, "repos/#{OWNER}/#{REPO}/issues", { :per_page => 100 })
+    issues = fetch_issues
     content_type "application/javascript"
     return "var issues = #{MultiJson.dump(issues)}"
   end
