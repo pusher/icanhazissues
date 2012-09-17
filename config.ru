@@ -99,8 +99,16 @@ class App < Sinatra::Base
     })
 
     report = ""
-    @issues.sort_by { |i| i["number"] }.each do |issue|
+
+    @issues.map do |issue|
+      labels = issue["labels"].map { |l| l["name"] }.sort - ["done"]
+      [issue, labels]
+    end.sort_by do |issue, labels|
+      # Sort by tags then number - fairly crude ordering but better than nada
+      [labels, issue["number"]]
+    end.each do |issue, labels|
       report << "#{issue["number"]}: #{issue["title"]}\n"
+      report << "⬠ #{labels.join(' ⬠ ')}\n"
       report << "https://github.com/pusher/pusher-server/issues/#{issue['number']}\n"
       report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
       report << "\n"
