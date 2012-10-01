@@ -16,7 +16,6 @@ var IssueView = function(issue){
   })
   
   this.template.draggable({
-    containment: 'document',
     scroll: false,
     zIndex: 10000,
     revert: 'invalid',
