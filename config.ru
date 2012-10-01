@@ -43,12 +43,15 @@ class App < Sinatra::Base
     end
     
     def remove_old_labels(issue)
+      old_labels = []
       issue['labels'].each do |label|
         if App::COLUMNS.include?(label['name']) 
+          old_labels << label
           path = "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/labels/#{label['name']}"
           github_raw_request(:delete, path, nil)
         end
       end
+      old_labels
     end
 
     def add_label(issue_num, label)
@@ -119,10 +122,13 @@ class App < Sinatra::Base
   post '/set_phase/:num' do
     authenticate!
     issue = github_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}")
-    remove_old_labels(issue)
+    old_labels = remove_old_labels(issue)
     if params['label'] != ""
       add_label(params['num'], params['label'])
     end
+    original_state = old_labels.empty? ? 'backlog' : old_labels.collect{|c| c['name']}.join(', ')
+    comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
+    github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", MultiJson.dump(comment))
     return 'success'
   end
 
