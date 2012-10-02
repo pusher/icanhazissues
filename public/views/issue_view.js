@@ -1,3 +1,16 @@
+function colourFromStaleness(date){
+  var date = new Date(date)
+  var now = new Date() 
+  var diff = ((now - date) /1000)
+  if (diff > 60 * 60 * 24 * 20){
+    return '#FF6B77'
+  } else if (diff > 60 * 60 * 24 * 10){
+    return '#FFAE6A'
+  } else {
+    return '#B1FF72'
+  }
+}
+
 var IssueView = function(issue){
   var self = this
   this.template = $('#issue').clone();
@@ -7,6 +20,7 @@ var IssueView = function(issue){
   this.template.css('-webkit-transform', 'rotate('+(-3 + Math.random() * 6) +'deg)')
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
+  this.template.css('background', colourFromStaleness(issue.updated_at));
   
   issue.labels.forEach(function(label){
     if (_.detect(DECORATIVE_LABELS, function(dl){ return dl.name == label.name }) != null){
