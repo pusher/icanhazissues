@@ -8,15 +8,26 @@ Handler.prototype.emit = function(event, data){
   this.events[event](data)
 }
 
-var ColumnSet = function(states){
+var ColumnSet = function(states, issues, parent, laneName, height){
   this._columns = {}
   var self = this;
+    
+  if (!laneName) {
+    this._el = parent
+  } else {
+    this._el = $('<div class="swimlane"></div>')
+    this._el.height(height)
+    parent.append(this._el)
+  }
   
   states.forEach(function(state){
+    console.log(self._el)
     var c = new ColumnView(state)
     self._columns[state.state] = c
-    $('.columns').append(c.html)
+    self._el.append(c.html)
   })
+  
+  this.addIssues(issues)
 }
 ColumnSet.prototype.addIssue = function(issue){
   if (this._columns[issue.state])
@@ -24,7 +35,7 @@ ColumnSet.prototype.addIssue = function(issue){
 }
 
 ColumnSet.prototype.addIssues = function(issues){
-  $('.drop').empty();  
+  this._el.find('.drop').empty();  
   var self = this;
   issues.forEach(function(issueData){
     self.addIssue(issueData)
@@ -51,12 +62,32 @@ function initIssueHash(issues){
   })
 }
 
-function initBoard(states){
+function initBoard(states, issues, swimlanes){
+  $('.columns').empty();
+  $('.titles').empty();
   DECORATIVE_LABELS = initLabels(labels, ALL_LABELS);
   addStateToIssues(issues, ALL_LABELS)
   initIssueHash(issues)
-  columnSet = new ColumnSet(states)
-  columnSet.addIssues(allIssues());
+  states.forEach(function(state){
+    var title = $('<h3>'+state.state+'</h3>')
+    title.width(state.width)
+    title.css('float', 'left')
+    $('.titles').append(title)
+  })
+  $('.columns').height(window.innerHeight - $('.titles').height() - $('#controlBoard').height())
+  if (swimlanes){
+    swimlanes.forEach(function(label){
+      columnSet = new ColumnSet(
+        states, 
+        filteredIssues(label, issues), 
+        $('.columns'),
+        label, 
+        (100 / swimlanes.length) + '%'
+      )
+    })
+  } else {
+    columnSet = new ColumnSet(states, issues, $('.columns'))
+  }
   $('#controlBoard').html( new LabelBarView().html )
   allowPopup();
 }
@@ -98,9 +129,9 @@ function hasLabel(issue, label){
   return (_.detect(issue.labels, function(a) { return a.name == label }) != null )
 }
 
-function filteredIssues(filter){
+function filteredIssues(filter, issues){
   if (filter && filter != 'all' ){
-    return _.filter(allIssues(), function(issue){
+    return _.filter(issues, function(issue){
       return hasLabel(issue, filter)
     })
   } else {

@@ -12,37 +12,61 @@
   <link rel="stylesheet" href="/kanban/app.css" type="text/css" media="screen">  
 </head>
 <script type="text/javascript" charset="utf-8">
-  var states = [
-    { state: 'ready', width: '20%' },
-    { state: 'development', width: '20%' },
-    { state: 'review', width: '20%' },
-    { state: 'release', width: '20%' },
-    { state: 'done', width: '20%' }
-  ]
-  // var states = [
-  //   { state: '', width: '60%' },
-  //   { state: 'priority', width: '20%' },
-  //   { state: 'ready', width: '20%' }
-  // ]
-  
+  var states = {
+    kanban: [
+      { state: 'ready', width: '20%' },
+      { state: 'development', width: '20%' },
+      { state: 'review', width: '20%' },
+      { state: 'release', width: '20%' },
+      { state: 'done', width: '20%' }
+    ],
+    backlog: [
+      { state: '', width: '60%' },
+      { state: 'priority', width: '20%' },
+      { state: 'ready', width: '20%' }
+    ]
+  }
   var ALL_LABELS = ['priority', 'ready','done','review','release', 'development']
   var DECORATIVE_LABELS;
   var columnSet;
   var issueHash = {};
-  $().ready(function(){
-    initBoard(states);
+  var ISSUECSS
+  
+  window.addEventListener("popstate", function(e) {
+    if (location.hash){  
+      var swimlanes;
+      var path = location.hash.replace('#/', '')
+      var parts = path.split('|')
+      path = parts[0]
+      if (parts[1]){
+        swimlanes = parts[1].split(',')
+      }
+      if (states[path]){
+        if (path == 'backlog')
+          ISSUECSS = { position: 'relative', float: 'left', width: '7em', 'font-size': '0.7em', height: '70px', overflow: 'hidden !important' }
+        else
+          ISSUECSS = null
+        initBoard(states[path], issues, swimlanes);
+      } else {
+        alert('bugger')
+      }
+    } else {
+      window.location.hash = '#/kanban'
+    }
   })
 </script>
 <body>
   
-  
-  <div class="columns"></div>
+
+  <div class="board">
+    <div class="titles"></div>
+    <div class="columns"></div>
+  </div>
   
   <div id="controlBoard"></div>
   
   <div id="templates">
     <div id="columnTemplate" class="column">
-      <h3>Name</h3>
       <div class="drop"></div>
     </div>
     

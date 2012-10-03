@@ -10,18 +10,14 @@ body {
 #templates {
   display: none;
 }
-
+.titles {
+  height: 1.4em;
+}
+.titles h3 {
+  line-height: 1.2em;
+}
 .columns .column {
   float: left;
-}
-
-.columns .column h3 {
-  text-align: center;
-  background: #B2C3D9;
-  padding: 10px;
-}
-.columns .column.odd h3 {
-  background: #9CB9FF;
 }
 .columns .column.odd {
   background: #D9FFFB;
@@ -30,12 +26,12 @@ body {
   background: #F0F8FF;
 }
 .drop {
-  height: 93%;
+  height: 100%;
   overflow: scroll;
 }
 .issue {
-  margin: 10px;
-  padding: 10px;
+  margin: 0.4em;
+  padding: 0.3em;;
   background-color: #FFF7AD;
   position: relative;
   -webkit-box-shadow: 0px 2px 10px rgba(0,0,0, 0.5);
@@ -48,8 +44,9 @@ body {
   color: #000000;
 }
 .issue h4 {
-  margin-bottom: 5px;
   word-wrap: break-word;
+  font-weight: normal;
+  font-size: 0.9em;
 }
 .issue.bug {
   background-color: pink;
@@ -110,7 +107,7 @@ html[xmlns] .clearfix {
 #controlBoard {
   z-index: 20;
   position: fixed;
-  height: 30px;
+  height: 1.2em;
   bottom: 0;
   left: 0;
 }

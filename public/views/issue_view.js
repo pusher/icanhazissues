@@ -21,7 +21,9 @@ var IssueView = function(issue){
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
   this.template.css('background', colourFromStaleness(issue.updated_at));
-  
+  if (ISSUECSS)
+    this.template.css(ISSUECSS)
+    
   issue.labels.forEach(function(label){
     if (_.detect(DECORATIVE_LABELS, function(dl){ return dl.name == label.name }) != null){
       self.template.addClass(label)
@@ -75,7 +77,6 @@ var ColumnView = function(phase){
   this.html = $('#columnTemplate').clone();
   this.html.attr('id', null);
   this.html.css('width', phase.width);
-  this.html.find('h3').text((phase.state == "") ? 'All' : phase.state)
   this.html.addClass(phase.state)
   this.html.addClass( ( ColumnView.incrementor % 2 == 0) ? 'odd' : 'even' )
   this.html.data('phase', phase.state)
