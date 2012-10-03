@@ -51,6 +51,16 @@ function initIssueHash(issues){
   })
 }
 
+function initBoard(states){
+  DECORATIVE_LABELS = initLabels(labels, ALL_LABELS);
+  addStateToIssues(issues, ALL_LABELS)
+  initIssueHash(issues)
+  columnSet = new ColumnSet(states)
+  columnSet.addIssues(allIssues());
+  $('#controlBoard').html( new LabelBarView().html )
+  allowPopup();
+}
+
 var setPhase = function(id, phase, callback){
   $.ajax({
     url: '/set_phase/'+id,

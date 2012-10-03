@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>Sorter</title>
+	<script src="/issues.js"></script>
+	<script src="/labels.js"></script>
+  <script src="../lib/jquery-1.7.2.min.js"></script>
+  <script src="../lib/jquery-ui-1.8.22.custom.min.js"></script>
+  <script src="../lib/underscore.js"></script>
+  <script src="../utility/master.js"></script>
+  <script src="../views/issue_view.js"></script>
+  <link rel="stylesheet" href="../stylesheets/master.css" type="text/css" media="screen">  
+  <link rel="stylesheet" href="/kanban/app.css" type="text/css" media="screen">  
+</head>
+<script type="text/javascript" charset="utf-8">
+  var states = [
+    { state: 'ready', width: '20%' },
+    { state: 'development', width: '20%' },
+    { state: 'review', width: '20%' },
+    { state: 'release', width: '20%' },
+    { state: 'done', width: '20%' }
+  ]
+  // var states = [
+  //   { state: '', width: '60%' },
+  //   { state: 'priority', width: '20%' },
+  //   { state: 'ready', width: '20%' }
+  // ]
+  
+  var ALL_LABELS = ['priority', 'ready','done','review','release', 'development']
+  var DECORATIVE_LABELS;
+  var columnSet;
+  var issueHash = {};
+  $().ready(function(){
+    initBoard(states);
+  })
+</script>
+<body>
+  
+  
+  <div class="columns"></div>
+  
+  <div id="controlBoard"></div>
+  
+  <div id="templates">
+    <div id="columnTemplate" class="column">
+      <h3>Name</h3>
+      <div class="drop"></div>
+    </div>
+    
+    <div id="issue" class="issue">
+      <h4><a>Issue</a></h4>
+      
+      <p class="labels"></p>
+    </div>
+    
+    <div id="issueFormTemplate" class="popupForm">
+      <form action="/issues" class="issueForm" method="POST">
+        <div><input name="issue[title]" id="issueTitle"></div>
+        <div><textarea name="issue[body]" id="issueBody"></textarea></div>
+        <div><input type="submit"></div>
+      </form>
+        
+    </div>
+    
+    <div id="controlBoardTemplate">
+      <div class="section">
+      <select id="labelFilter">
+      </select>
+      </div>
+
+      <div class="section" id="labelBar"></div>
+      <div class="section">
+        <a href="#" class="showLabelFormBtn">+</a>
+      </div>
+      <div class="section" class="newLabel">
+        <form action="/labels" class="newLabelForm" method="POST">
+          <input name="label[name]">
+          <input name="label[color]" type="color" value="#ff0000">
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
