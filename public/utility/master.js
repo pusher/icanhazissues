@@ -21,7 +21,6 @@ var ColumnSet = function(states, issues, parent, laneName, height){
   }
   
   states.forEach(function(state){
-    console.log(self._el)
     var c = new ColumnView(state)
     self._columns[state.state] = c
     self._el.append(c.html)
@@ -67,6 +66,11 @@ function initBoard(states, issues, swimlanes){
   $('.titles').empty();
   DECORATIVE_LABELS = initLabels(labels, ALL_LABELS);
   addStateToIssues(issues, ALL_LABELS)
+  issues = _.filter(issues, function(issue){
+    return (_.detect(states, function(state){
+      return state.state == issue.state
+    }) != null);
+  })
   initIssueHash(issues)
   states.forEach(function(state){
     var title = $('<h3>'+state.state+'</h3>')
@@ -75,16 +79,37 @@ function initBoard(states, issues, swimlanes){
     $('.titles').append(title)
   })
   $('.columns').height(window.innerHeight - $('.titles').height() - $('#controlBoard').height())
+  var heights = {
+    'ops': '25%',
+    'transport': '25%',
+    'all': '50%'
+  }
   if (swimlanes){
+    // var height = (100 / (swimlanes.length + 1))
+    var usedIssues = []
     swimlanes.forEach(function(label){
+      var sIssues = filteredIssues(label, issues)
+      usedIssues = usedIssues.concat(sIssues)
       columnSet = new ColumnSet(
         states, 
-        filteredIssues(label, issues), 
+        sIssues, 
         $('.columns'),
         label, 
-        (100 / swimlanes.length) + '%'
+        heights[label]
       )
     })
+    var rejectedIssues = _.filter(issues, function(issue){
+      return (_.detect(usedIssues, function(uIssue){
+        return uIssue.id == issue.id;
+      }) == null);
+    })
+    new ColumnSet(
+      states, 
+      rejectedIssues, 
+      $('.columns'),
+      'all', 
+      heights['all']
+    )
   } else {
     columnSet = new ColumnSet(states, issues, $('.columns'))
   }

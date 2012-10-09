@@ -17,7 +17,7 @@ var IssueView = function(issue){
   this.template.attr('id', null);
   this.template.find('h4 a').text(issue.title)
   this.template.find('h4 a').attr('href',  issue.html_url)
-  this.template.css('-webkit-transform', 'rotate('+(-3 + Math.random() * 6) +'deg)')
+  this.template.css('-webkit-transform', 'rotate('+(-0.5 + Math.random() * 3) +'deg)')
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
   this.template.css('background', colourFromStaleness(issue.updated_at));

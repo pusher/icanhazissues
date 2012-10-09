@@ -58,11 +58,10 @@ class App < Sinatra::Base
 
   get '/' do
     authenticate!
-    "Hello There, <a href=\"/kanban/index.html\">Kan Ban</a>"
+    redirect '/board'
   end
 
   get '/issues.js' do
-    authenticate!
     issues = fetch_issues
     content_type "application/javascript"
     return "var issues = #{MultiJson.dump(issues)}"
@@ -74,7 +73,6 @@ class App < Sinatra::Base
   end
   
   get '/labels.js' do
-    authenticate!
     labels = github_request(:get, "repos/#{OWNER}/#{REPO}/labels", { :per_page => 100 })
     content_type "application/javascript"
     return "var labels = #{MultiJson.dump(labels)}"

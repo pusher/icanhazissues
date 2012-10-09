@@ -41,6 +41,7 @@
       if (parts[1]){
         swimlanes = parts[1].split(',')
       }
+      swimlanes = ['ops','transport']
       if (states[path]){
         if (path == 'backlog')
           ISSUECSS = { position: 'relative', float: 'left', width: '7em', 'font-size': '0.7em', height: '70px', overflow: 'hidden !important' }
