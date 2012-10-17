@@ -66,10 +66,15 @@ function initBoard(states, issues, swimlanes){
   $('.titles').empty();
   DECORATIVE_LABELS = initLabels(labels, ALL_LABELS);
   addStateToIssues(issues, ALL_LABELS)
+  // remove issues that aren't needed on the board
   issues = _.filter(issues, function(issue){
     return (_.detect(states, function(state){
       return state.state == issue.state
     }) != null);
+  })
+  // remove pull requests 
+  issues = _.filter(issues, function(issue){
+    return issue.pull_request.patch_url == null
   })
   initIssueHash(issues)
   states.forEach(function(state){
