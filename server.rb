@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class App < Sinatra::Base
   enable :sessions
   set :public_folder, File.join(File.dirname(__FILE__), 'public')
@@ -85,20 +87,28 @@ class App < Sinatra::Base
       :labels => "done"
     })
 
-    report = ""
+    swimlanes = params[:swimlanes] ? params[:swimlanes].split(',') : []
+
+    report = "#{@issues.size} stories done.\n\n"
 
     @issues.map do |issue|
       labels = issue["labels"].map { |l| l["name"] }.sort - ["done"]
       [issue, labels]
-    end.sort_by do |issue, labels|
-      # Sort by tags then number - fairly crude ordering but better than nada
-      [labels, issue["number"]]
-    end.each do |issue, labels|
-      # report << "#{issue["number"]}: #{issue["title"]}\n"
-      # report << "⬠ #{labels.join(' ⬠ ')}\n"
-      # report << "https://github.com/pusher/pusher-server/issues/#{issue['number']}\n"
-      # report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
-      # report << "\n"
+    end.group_by do |issue, labels|
+      index = labels.sort.map { |label| swimlanes.index(label) }.compact.first
+      index ? swimlanes[index] : "other"
+    end.each do |swimlane, issue_labels|
+      heading = "SWIMLANE: #{swimlane} (#{issue_labels.size})"
+      report << "<h3>#{heading}</h3>"
+      report << '=' * heading.size + "\n\n"
+
+      issue_labels.each do |issue, labels|
+        report << "#{issue["number"]}: #{issue["title"]}\n"
+        report << "⬠ #{labels.join(' ⬠ ')}\n"
+        report << "https://github.com/pusher/pusher-server/issues/#{issue['number']}\n"
+        report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
+        report << "\n"
+      end
     end
 
     return '<pre>' + report + '</pre>'
