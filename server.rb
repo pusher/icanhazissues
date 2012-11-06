@@ -69,6 +69,12 @@ class App < Sinatra::Base
     return "var issues = #{MultiJson.dump(issues)}"
   end
   
+  get '/milestones.js' do
+    milestones = github_request(:get, "repos/#{OWNER}/#{REPO}/milestones")
+    content_type "application/javascript"
+    return "var milestones = #{MultiJson.dump(milestones)}"
+  end
+
   get '/board' do
     authenticate!
     erb :board
