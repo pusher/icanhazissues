@@ -176,3 +176,10 @@ html[xmlns] .clearfix {
 .over {
   background: #FCFFD4 !important;
 }
+.htext {
+  position: absolute;
+  font-size: 4em;
+  width: 100%;
+  text-align: center;
+  opacity: 0.4;
+}

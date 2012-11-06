@@ -9,24 +9,26 @@ Handler.prototype.emit = function(event, data){
 }
 
 var ColumnSet = function(states, issues, parent, laneName, height){
-  this._columns = {}
-  var self = this;
-    
-  if (!laneName) {
-    this._el = parent
-  } else {
-    this._el = $('<div class="swimlane"></div>')
-    this._el.height(height)
-    parent.append(this._el)
+  if (issues.length > 0){
+    this._columns = {}
+    var self = this;
+    if (!laneName) {
+      this._el = parent
+    } else {
+      this._el = $('<div class="swimlane"></div>')
+      this._el.height(height)
+      parent.append( $('<div class="htext">'+laneName+'</div>'))
+      parent.append(this._el)
+    }
+  
+    states.forEach(function(state){
+      var c = new ColumnView(state)
+      self._columns[state.state] = c
+      self._el.append(c.html)
+    })
+  
+    this.addIssues(issues)
   }
-  
-  states.forEach(function(state){
-    var c = new ColumnView(state)
-    self._columns[state.state] = c
-    self._el.append(c.html)
-  })
-  
-  this.addIssues(issues)
 }
 ColumnSet.prototype.addIssue = function(issue){
   if (this._columns[issue.state])
@@ -61,7 +63,7 @@ function initIssueHash(issues){
   })
 }
 
-function initBoard(states, issues, swimlanes){
+function initBoard(states, issues, milestones){
   $('.columns').empty();
   $('.titles').empty();
   DECORATIVE_LABELS = initLabels(labels, ALL_LABELS);
@@ -84,36 +86,50 @@ function initBoard(states, issues, swimlanes){
     $('.titles').append(title)
   })
   $('.columns').height(window.innerHeight - $('.titles').height() - $('#controlBoard').height())
-  var heights = {
-    'ops': '25%',
-    'transport': '25%',
-    'all': '50%'
-  }
-  if (swimlanes){
-    // var height = (100 / (swimlanes.length + 1))
-    var usedIssues = []
-    swimlanes.forEach(function(label){
-      var sIssues = filteredIssues(label, issues)
-      usedIssues = usedIssues.concat(sIssues)
+  $(window).resize(function(){
+    $('.columns').height(window.innerHeight - $('.titles').height() - $('#controlBoard').height())
+  })
+  if (milestones){
+    var height = (100 / (milestones.length + 1)) + '%'
+    milestones.forEach(function(milestone){
+      var sIssues = _.filter(issues, function(issue){
+        return issue.milestone && issue.milestone.id == milestone.id
+      })
       columnSet = new ColumnSet(
         states, 
         sIssues, 
         $('.columns'),
-        label, 
-        heights[label]
+        milestone.title, 
+        height
       )
     })
     var rejectedIssues = _.filter(issues, function(issue){
-      return (_.detect(usedIssues, function(uIssue){
-        return uIssue.id == issue.id;
-      }) == null);
+      return issue.milestone == null
+    })
+    var opsIssues = [] 
+    var devIssues = [] 
+    rejectedIssues.forEach(function(issue){
+      if (_.detect(issue.labels, function(label){
+        return label.name == 'ops';
+      }) == null){
+        devIssues.push(issue)
+      } else {
+        opsIssues.push(issue)
+      }
     })
     new ColumnSet(
       states, 
-      rejectedIssues, 
+      devIssues, 
       $('.columns'),
       'all', 
-      heights['all']
+      height
+    )
+    new ColumnSet(
+      states, 
+      opsIssues, 
+      $('.columns'),
+      'all ops', 
+      height
     )
   } else {
     columnSet = new ColumnSet(states, issues, $('.columns'))
