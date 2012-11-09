@@ -94,7 +94,8 @@ function initBoard(states, issues, milestones){
   })
   initIssueHash(issues)
   states.forEach(function(state){
-    var title = $('<h3>'+state.state+'</h3>')
+    var heading = (state.state == '') ? 'All' : state.state
+    var title = $('<h3>'+heading+'</h3>')
     title.width(state.width)
     title.css('float', 'left')
     $('.titles').append(title)
