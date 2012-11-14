@@ -93,18 +93,26 @@ class App < Sinatra::Base
       :labels => "done"
     })
 
-    swimlanes = params[:swimlanes] ? params[:swimlanes].split(',') : []
-
     report = "#{@issues.size} stories done.\n\n"
 
     @issues.map do |issue|
+      # Extract labels into [String]
       labels = issue["labels"].map { |l| l["name"] }.sort - ["done"]
       [issue, labels]
-    end.group_by do |issue, labels|
-      index = labels.sort.map { |label| swimlanes.index(label) }.compact.first
-      index ? swimlanes[index] : "other"
-    end.each do |swimlane, issue_labels|
-      heading = "SWIMLANE: #{swimlane} (#{issue_labels.size})"
+    end.group_by do |issue, labels, milestone|
+      # Group by milestone name, or operations
+      if (ms = issue["milestone"])
+        [ms["title"], ms]
+      elsif labels.include?('ops')
+        ['Operations', nil]
+      else
+        ['Other tech', nil]
+      end
+    end.sort_by do |(milestone_title, milestone), _|
+      # Show oldest milestones first
+      milestone ? milestone["created_at"] : "Z#{milestone_title}"
+    end.each do |(milestone_title, milestone), issue_labels|
+      heading = "MILESTONE: #{milestone_title} (#{issue_labels.size})"
       report << "<h3>#{heading}</h3>"
       report << '=' * heading.size + "\n\n"
 
