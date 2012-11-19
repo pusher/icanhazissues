@@ -1,6 +1,13 @@
 # encoding: utf-8
+require 'airbrake'
+
+Airbrake.configure do |config|
+  config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
+end
 
 class App < Sinatra::Base
+  use Airbrake::Rack
+  enable :raise_errors
   enable :sessions
   set :public_folder, File.join(File.dirname(__FILE__), 'public')
 
