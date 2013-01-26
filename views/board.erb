@@ -9,6 +9,8 @@
   <script src="../lib/underscore.js"></script>
   <script src="../utility/master.js"></script>
   <script src="../views/issue_view.js"></script>
+  <script src="/lib/davis.min.js"></script>
+  <script src="/lib/davis-hashrouting.js"></script>
   <link rel="stylesheet" href="../stylesheets/master.css" type="text/css" media="screen">  
   <link rel="stylesheet" href="/kanban/app.css" type="text/css" media="screen">  
 </head>
@@ -33,21 +35,23 @@
   var issueHash = {};
   var ISSUECSS
   
-  window.addEventListener("popstate", function(e) {
-    if (location.hash){  
-      var path = location.hash.replace('#/', '')
-      if (states[path]){
-        if (path == 'backlog')
-          ISSUECSS = { position: 'relative', float: 'left', width: '7em', 'font-size': '0.7em', height: '70px', overflow: 'hidden !important' }
-        else
-          ISSUECSS = null
-        initBoard(states[path], issues, milestones);
-      } else {
-        alert('bugger')
-      }
-    } else {
-      window.location.hash = '#/kanban'
-    }
+
+  $().ready(function(){
+    Davis.extend( Davis.hashRouting({forceHashRouting: true}) )
+
+    var app = Davis(function () {
+      this.settings.generateRequestOnPageLoad = true
+
+      this.get('/backlog', function (req) {
+        ISSUECSS = { position: 'relative', float: 'left', width: '7em', 'font-size': '0.7em', height: '70px', overflow: 'hidden !important' }
+        initBoard(states['backlog'], issues, milestones);
+      })
+
+      this.get('/kanban', function (req) {
+        ISSUECSS = null
+        initBoard(states['kanban'], issues, milestones);
+      })
+    })
   })
 </script>
 <body>
