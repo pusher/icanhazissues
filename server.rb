@@ -100,7 +100,7 @@ class App < Sinatra::Base
       :labels => "done"
     })
 
-    report = "#{@issues.size} stories done.\n\n"
+    report = "[iteration-end] #{@issues.size} stories done\n\n"
 
     @issues.map do |issue|
       # Extract labels into [String]
@@ -121,12 +121,12 @@ class App < Sinatra::Base
     end.each do |(milestone_title, milestone), issue_labels|
       heading = "MILESTONE: #{milestone_title} (#{issue_labels.size})"
       report << "<h3>#{heading}</h3>"
-      report << '=' * heading.size + "\n\n"
 
       issue_labels.each do |issue, labels|
-        report << "#{issue["number"]}: #{issue["title"]}\n"
-        report << "⬠ #{labels.join(' ⬠ ')}\n"
-        report << "https://github.com/pusher/pusher-server/issues/#{issue['number']}\n"
+        url = "https://github.com/pusher/pusher-server/issues/#{issue['number']}"
+        report << "<a href='#{url}'>#{issue["number"]}</a>: " \
+          "#{issue["title"]}\n"
+        # report << "⬠ #{labels.join(' ⬠ ')}\n"
         report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
         report << "\n"
       end
