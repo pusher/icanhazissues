@@ -67,7 +67,7 @@ class App < Sinatra::Base
 
   get '/' do
     authenticate!
-    redirect '/board'
+    redirect '/board#/backlog'
   end
 
   get '/issues.js' do
