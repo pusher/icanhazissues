@@ -9,12 +9,14 @@
   <script src="../lib/underscore.js"></script>
   <script src="../utility/master.js"></script>
   <script src="../views/issue_view.js"></script>
+  <script src="../views/filter_view.js"></script>
   <script src="/lib/davis.min.js"></script>
   <script src="/lib/davis-hashrouting.js"></script>
   <link rel="stylesheet" href="../stylesheets/master.css" type="text/css" media="screen">  
   <link rel="stylesheet" href="/kanban/app.css" type="text/css" media="screen">  
 </head>
 <script type="text/javascript" charset="utf-8">
+  var github_login = <%= github_user.login.inspect %>
   var states = {
     kanban: [
       { state: 'ready', width: '20%' },
@@ -34,7 +36,29 @@
   var columnSet;
   var issueHash = {};
   var ISSUECSS
-  
+
+  function newFilteredIssues(filters){
+    var newIssues = issues.slice(0)
+    if (filters && filters.labels){
+      // this assumes combining labels as an AND rather than OR
+      filters.labels.forEach(function(label){
+        newIssues = filteredIssues( label, newIssues )
+      })
+    }
+    if (filters && filters.creator){
+      var creator = filters.creator == "me" ? github_login : filters.creator
+      newIssues = _.filter(newIssues, function(issue){
+        return issue.user.login == creator
+      })
+    }
+    if (filters && filters.milestone){
+      newIssues = _.filter(newIssues, function(issue){
+        console.log(filters.milestone)
+        return issue.milestone && issue.milestone.title == filters.milestone[0]
+      })
+    }
+    return newIssues
+  }
 
   $().ready(function(){
     Davis.extend( Davis.hashRouting({forceHashRouting: true}) )
@@ -43,21 +67,30 @@
       this.settings.generateRequestOnPageLoad = true
 
       this.get('/backlog', function (req) {
+        $('.side').show().css({float: 'left', width: '200px', height: '100%'})
+        $('.board').css("margin-left", '200px')
         ISSUECSS = { position: 'relative', float: 'left', width: '7em', 'font-size': '0.7em', height: '70px', overflow: 'hidden !important' }
-        initBoard(states['backlog'], issues, milestones);
+        initBoard(states['backlog'], newFilteredIssues(req.params.filters), []);
+        $('.side').html( new SideBarView(req.params.filters, DECORATIVE_LABELS, milestones).html )
+        $('#controlBoard').html( new LabelBarView().html )
+        window.title = 'Backlog'
       })
 
       this.get('/kanban', function (req) {
+        $('.side').empty().hide()
         ISSUECSS = null
         initBoard(states['kanban'], issues, milestones);
       })
     })
+
   })
 </script>
 <body>
-  
+  <div class="side">
 
-  <div class="board">
+  </div>
+
+  <div class="board" >
     <div class="titles"></div>
     <div class="columns"></div>
   </div>
@@ -69,6 +102,13 @@
       <div class="drop"></div>
     </div>
     
+    <div id="filterFormTemplate">
+      <h3>Filter issues</h3>
+      <form class="filterForm" action="/backlog" method="GET"></form>
+
+
+    </div>
+
     <div id="issue" class="issue">
       <h4><a>Issue</a></h4>
       
@@ -85,16 +125,11 @@
     </div>
     
     <div id="controlBoardTemplate">
-      <div class="section">
-      <select id="labelFilter">
-      </select>
-      </div>
-
-      <div class="section" id="labelBar"></div>
-      <div class="section">
+      <div id="labelBar"></div>
+      <div>
         <a href="#" class="showLabelFormBtn">+</a>
       </div>
-      <div class="section" class="newLabel">
+      <div class="newLabel">
         <form action="/labels" class="newLabelForm" method="POST">
           <input name="label[name]">
           <input name="label[color]" type="color" value="#ff0000">

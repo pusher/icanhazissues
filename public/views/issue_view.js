@@ -114,61 +114,6 @@ ColumnView.prototype.addIssue = function(issue){
 }
 ColumnView.incrementor = 0
 
-var LabelBarView = function(){
-  var self = this;
-  this.html = $('#controlBoardTemplate').clone();
-  this.html.attr('id', null)
-  
-  this.addLabel = function(label){
-    var option = $('<option value="'+label.name+'">'+label.name+'</option>')
-    self.html.find('#labelFilter').append(option)
-    self.html.find('#labelBar').append( new LabelView(label).html )
-  }
-  
-  var option = $('<option value="all">All</option>')
-  this.html.find('#labelFilter').append(option)
-  DECORATIVE_LABELS.forEach(function(label){
-    self.addLabel(label)
-  })
-  this.html.find('#labelFilter').change(function(){
-    columnSet.addIssues( filteredIssues( $(this).val() ) );
-  });
-  
-  this.html.find('.showLabelFormBtn').click(function(){
-    self.html.find('.newLabelForm').show();
-    $(this).hide();
-    return false;
-  })
-  this.html.find('.newLabelForm').hide()
-  this.html.find('.newLabelForm').submit(function(){
-    var form = this;
-    $.ajax({
-      url: $(this).attr('action'),
-      data: $(this).serialize(),
-      type: $(this).attr('method'),
-      dataType: 'JSON',
-      success: function(label){
-        self.addLabel(label)
-        $(form)[0].reset();
-      },
-      error: function(){
-        alert('some sort of error has occurred.')
-      }
-    });
-    return false;
-  });
-}
-
-var LabelView = function(label){
-  this.html = $('<a href="#" class="label" style="background: '+label.color+'">'+label.name+'</a>')
-  this.html.data('label', label)
-  this.html.draggable({
-    helper: 'clone',
-    containment: 'document',
-    appendTo: 'body' 
-  })
-}
-
 
 var IssueFormView = function(){
   var self = this;

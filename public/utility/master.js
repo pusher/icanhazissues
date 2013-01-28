@@ -66,7 +66,7 @@ function initIssueHash(issues){
 }
 
 function resizeBoard(columnSets, remainderColumnSets) {
-  var boardHeight = window.innerHeight - $('.titles').height() - $('#controlBoard').height()
+  var boardHeight = window.innerHeight - $('.titles').height()
   $('.columns').height(boardHeight)
   var height = 0
   columnSets.forEach(function(columnSet){
@@ -159,8 +159,6 @@ function initBoard(states, issues, milestones){
     resizeBoard(columnSets, remainderColumnSets)
   })
   
-  
-  $('#controlBoard').html( new LabelBarView().html )
   allowPopup();
 }
 
@@ -186,6 +184,24 @@ var addLabel = function(id, label, callback){
     },
     success: callback
   })
+}
+
+var decodeUrl = function (str) {
+  return decodeURIComponent(str.replace(/\+/g, '%20'))
+};
+
+var davisRequestFromForm = function(form){
+  var params = {
+     method: form.attr('method'),
+     fullPath: decodeUrl(form.serialize() ? [form.prop('action'), form.serialize()].join("?") : form.prop('action')),
+     title: form.attr('title'),
+     delegateToServer: function () {
+       // not sure in what circumstances this fires
+       // form.submit()
+     }
+  };
+  var request = new Davis.Request( params );
+  Davis.location.assign(request)
 }
 
 function getLabel(issue, potentialLabels){

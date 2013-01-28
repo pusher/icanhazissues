@@ -12,9 +12,19 @@ body {
 }
 .titles {
   height: 1.4em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box; /* Firefox */
+  -webkit-box-sizing: border-box; /* Safari */
 }
 .titles h3 {
   line-height: 1.2em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box; /* Firefox */
+  -webkit-box-sizing: border-box; /* Safari */
+  padding: 3px;
+  background: #333;
+  color: #fff;
+  font-weight: normal;
 }
 .columns .column {
   float: left;
@@ -182,4 +192,26 @@ html[xmlns] .clearfix {
   width: 100%;
   text-align: center;
   opacity: 0.4;
+}
+.side {
+  float:left;
+  width:200px;
+  height: 100%;
+  background: #eee;
+}
+.side label {
+  padding-left: 0.2em;
+  font-size: 0.9em;
+  width: 90%;
+  display: inline-block;
+}
+.side h4 {
+  margin: 0.7em 0;
+}
+.swimlane {
+  box-sizing:border-box;
+  -moz-box-sizing:border-box; /* Firefox */
+  -webkit-box-sizing:border-box; /* Safari */
+  border-bottom: #303B99 solid 2px;
+  padding-bottom: 10px;
 }
