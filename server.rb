@@ -152,6 +152,11 @@ class App < Sinatra::Base
     original_state = old_labels.empty? ? 'backlog' : old_labels.collect{|c| c['name']}.join(', ')
     comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
     github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", MultiJson.dump(comment))
+    unless params['label'] == "" || params['label'] == 'priority' || (params['label'] == 'ready' && (old_labels & %w(development done review release)).empty?)
+      original_state = old_labels.empty? ? 'backlog' : old_labels.collect{|c| c['name']}.join(', ')
+      comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
+      github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", MultiJson.dump(comment))
+    end
     return 'success'
   end
 
