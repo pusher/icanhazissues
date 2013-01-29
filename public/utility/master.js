@@ -70,7 +70,7 @@ function resizeBoard(columnSets, remainderColumnSets) {
   $('.columns').height(boardHeight)
   var height = 0
   columnSets.forEach(function(columnSet){
-    height += 100
+    height += 200
   })
   remainderColumnSets.forEach(function(columnSet){
     columnSet.setHeight((boardHeight - height) / remainderColumnSets.length)
@@ -114,7 +114,7 @@ function initBoard(states, issues, milestones){
             sIssues, 
             $('.columns'),
             milestone.title, 
-            "100px"
+            "200px"
           )
         )
       }
@@ -139,7 +139,7 @@ function initBoard(states, issues, milestones){
         devIssues, 
         $('.columns'),
         'all', 
-        "100px"
+        "200px"
       )
     )
     remainderColumnSets.push( 
@@ -148,7 +148,7 @@ function initBoard(states, issues, milestones){
         opsIssues, 
         $('.columns'),
         'all ops', 
-        "100px"
+        "200px"
       )
     )
   } else {
