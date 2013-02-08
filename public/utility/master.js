@@ -68,12 +68,17 @@ function initIssueHash(issues){
 function resizeBoard(columnSets, remainderColumnSets) {
   var boardHeight = window.innerHeight - $('.titles').height()
   $('.columns').height(boardHeight)
-  var height = 0
+
+  // Give half the height to swimlanes, half to other
+  // Subtract 2px for each to account for the px bottom border
+  swimlaneHeight = (boardHeight / 2) / columnSets.length - 2
+  remainderHeight = (boardHeight / 2) / remainderColumnSets.length - 2
+
   columnSets.forEach(function(columnSet){
-    height += 200
+    columnSet.setHeight(swimlaneHeight)
   })
   remainderColumnSets.forEach(function(columnSet){
-    columnSet.setHeight((boardHeight - height) / remainderColumnSets.length)
+    columnSet.setHeight(remainderHeight)
   })
 }
 
