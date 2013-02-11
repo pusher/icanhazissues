@@ -24,6 +24,7 @@ class App < Sinatra::Base
     
     def pag(response, i)
       new_issues = MultiJson.load(response)
+      puts "LINK: #{response.headers[:link]}"
       if new_issues.length == 100 && i < 10
         next_link = response.headers[:link].gsub(/^\<([^>]+)\>.*$/, "\\1")
         new_issues + pag(RestClient.get(next_link), i + 1)
