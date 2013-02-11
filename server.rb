@@ -19,14 +19,14 @@ class App < Sinatra::Base
 
     def fetch_issues
       response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, { :per_page => 100 })
-      pag(response)
+      pag(response, 1)
     end
     
-    def pag(response)
+    def pag(response, i)
       new_issues = MultiJson.load(response)
-      if new_issues.length == 100
+      if new_issues.length == 100 && i < 10
         next_link = response.headers[:link].gsub(/^\<([^>]+)\>.*$/, "\\1")
-        new_issues + pag(RestClient.get(next_link))
+        new_issues + pag(RestClient.get(next_link), i + 1)
       else
         new_issues
       end
