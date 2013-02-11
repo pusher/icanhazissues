@@ -11,7 +11,7 @@ body {
   display: none;
 }
 .titles {
-  height: 1.4em;
+  height: 28px;
   box-sizing: border-box;
   -moz-box-sizing: border-box; /* Firefox */
   -webkit-box-sizing: border-box; /* Safari */
@@ -213,5 +213,4 @@ html[xmlns] .clearfix {
   -moz-box-sizing:border-box; /* Firefox */
   -webkit-box-sizing:border-box; /* Safari */
   border-bottom: #303B99 solid 2px;
-  padding-bottom: 10px;
 }
