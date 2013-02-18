@@ -78,6 +78,7 @@
 
       this.get('/kanban', function (req) {
         $('.side').empty().hide()
+        $('.board').css("margin-left", 'auto')
         ISSUECSS = null
         initBoard(states['kanban'], issues, milestones);
       })
