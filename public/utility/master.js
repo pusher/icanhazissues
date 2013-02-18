@@ -112,7 +112,7 @@ function initBoard(states, issues, milestones){
   })
   var columnSets = [];
   var remainderColumnSets = [];
-  if (milestones){
+  if (milestones.length > 0){
     milestones.forEach(function(milestone){
       var sIssues = _.filter(issues, function(issue){
         return issue.milestone && issue.milestone.id == milestone.id
