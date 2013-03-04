@@ -1,0 +1,21 @@
+<h2>The petitions have been decided!</h2>
+
+<h3>Accepted</h3>
+<% @accepted.each do |issue| %>
+  <div>
+    <h4 style="color:#008F54"><%= issue['title'] %></h4>
+    <% if !issue['reason'].blank? %>
+    <p><%= issue['reason'] %></p>
+    <% end %>
+  </div>
+<% end %>
+
+<h3>Back to the swamp</h3>
+<% @denied.each do |issue| %>
+  <div>
+    <h4 style="color:#996900"><%= issue['title'] %></h4>
+    <% if !issue['reason'].blank? %>
+    <p><%= issue['reason'] %></p>
+    <% end %>
+  </div>
+<% end %>

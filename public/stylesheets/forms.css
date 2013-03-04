@@ -1,0 +1,41 @@
+* {
+  font-family: helvetica, arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.accept {
+  background: #A3FF8D;
+}
+.deny {
+  background: #FF6B71;
+}
+.comments {
+  height: 100px;
+  overflow: scroll;
+}
+.comments p {
+  margin-bottom: 0.5em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+td{
+  border-bottom: 2px solid #442999;
+}
+td h4 {
+  background: #990057;
+  color: #fff;
+  font-weight: normal;
+}
+table pre {
+  white-space: pre-wrap; 
+  word-wrap: break-word;
+  margin-bottom: 0.5em;
+  border: 1px solid #6D7D99;
+}
+pre img {
+  float: left;
+  width: 20px;
+  height: 20px;
+}

@@ -1,0 +1,28 @@
+<link rel="stylesheet" href="/stylesheets/forms.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<h3>Done stories</h3>
+
+<form action="/done_submission" method="post">
+<table>
+<% @issues.each do |issue| %>
+  <tr>
+    <td><h4><%= issue['title'] %></h4>
+      <div class="comments">
+        <pre style="background: #FFECCB">
+          <%= issue['body']
+ %>
+        </pre>
+        <% issue['comments'].each do |comment| %>
+          <pre><img src="<%= comment['user']['avatar_url'] %>">
+            <%= comment['body'] %>
+          </pre>
+        <% end %>
+      </div>  
+    </td>
+    <td class="accept"><input type="radio" name="issues[<%= issue['id'] %>][accepted]" value="1" checked="checked" required="required"></td>
+    <td class="deny"><input type="radio" name="issues[<%= issue['id'] %>][accepted]" value="0" required="required"></td>
+    <td><textarea rows="5" cols="40" name="issues[<%= issue['id'] %>][comment]"></textarea></td>
+  </tr>
+<% end %>
+</table>
+<input type="submit">
+</form>

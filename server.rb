@@ -17,8 +17,12 @@ class App < Sinatra::Base
 
   helpers do
 
-    def fetch_issues
-      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, { :per_page => 100 })
+    def get_comments(issue, opts={})
+      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", nil, opts.merge({ :per_page => 100 }))
+    end
+
+    def fetch_issues(opts={})
+      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, opts.merge({ :per_page => 100 }))
       pag(response)
     end
     
@@ -68,6 +72,43 @@ class App < Sinatra::Base
   get '/' do
     authenticate!
     redirect '/board#/backlog'
+  end
+
+  get '/ptk' do
+    authenticate!
+    @issues = fetch_issues({ labels: 'priority' })
+    @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
+    erb :ptk
+  end
+
+  post '/ptk_submission' do
+    authenticate!
+    @issues = fetch_issues({ labels: 'priority' })
+    @accepted = []
+    @denied = []
+    params[:issues].each_pair do |k, v|
+      issue = @issues.detect{|i| i['id'] == k.to_i }
+      issue['reason'] = v['comment']
+      remove_old_labels(issue)
+      if !v['comment'].blank?
+        comment = { :body =>  v['comment'] }
+        github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", MultiJson.dump(comment))
+      end
+      if v[:accepted] == '1'
+        add_label(issue['number'], 'ready')
+        @accepted << issue
+      else
+        @denied << issue
+      end
+    end
+    erb :ptk_report
+  end
+
+  get '/done' do
+    authenticate!
+    @issues = fetch_issues({ labels: 'done' })
+    @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
+    erb :done
   end
 
   get '/issues.js' do
