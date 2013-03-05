@@ -21,6 +21,16 @@ var IssueView = function(issue){
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
   this.template.css('background', colourFromStaleness(issue.updated_at));
+
+  issue.labels.forEach(function(label){
+    if (label.name == 'blocked')
+      self.template.css({
+        'background-image': 'url(/images/sad.png)',
+        'background-position': 'center',
+        'background-repeat': 'no-repeat'
+      });
+  })
+
   if (ISSUECSS)
     this.template.css(ISSUECSS)
     
