@@ -5,9 +5,11 @@
 }
 .accept {
   background: #A3FF8D;
+  padding: 5px;
 }
 .deny {
   background: #FF6B71;
+  padding: 5px;
 }
 .comments {
   height: 100px;
@@ -17,22 +19,25 @@
   margin-bottom: 0.5em;
 }
 table {
-  width: 100%;
+  width: 95%;
   border-collapse: collapse;
+  margin: 10px;
 }
 td{
-  border-bottom: 2px solid #442999;
+  border-bottom: 5px solid #fff;
 }
 td h4 {
   background: #990057;
   color: #fff;
   font-weight: normal;
+  padding: 0.2em;
 }
 table pre {
   white-space: pre-wrap; 
   word-wrap: break-word;
   margin-bottom: 0.5em;
   border: 1px solid #6D7D99;
+  padding: 5px;
 }
 pre img {
   float: left;

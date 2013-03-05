@@ -7,14 +7,10 @@
   <tr>
     <td><h4><%= issue['title'] %></h4>
       <div class="comments">
-        <pre style="background: #FFECCB">
-          <%= issue['body']
- %>
-        </pre>
+        <pre style="background: #FFECCB"><img src="<%= issue['user']['avatar_url'] %>"><%= issue['body']
+ %></pre>
         <% issue['comments'].each do |comment| %>
-          <pre><img src="<%= comment['user']['avatar_url'] %>">
-            <%= comment['body'] %>
-          </pre>
+          <pre><img src="<%= comment['user']['avatar_url'] %>"><%= comment['body'] %></pre>
         <% end %>
       </div>  
     </td>
