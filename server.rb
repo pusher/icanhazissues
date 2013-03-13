@@ -1,8 +1,16 @@
 # encoding: utf-8
 require 'airbrake'
+require 'rest-client'
+
 
 Airbrake.configure do |config|
   config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
+end
+
+class PusherEvent
+  def initialize(event, params={})
+    RestClient.post('dradis-prod.herokuapp.com/events', {event: { name: event, params: params }})
+  end
 end
 
 class App < Sinatra::Base
@@ -101,6 +109,7 @@ class App < Sinatra::Base
         @denied << issue
       end
     end
+    PusherEvent.new('ptk', { accepted: @accepted, denied: @denied })
     erb :ptk_report
   end
 
@@ -195,6 +204,7 @@ class App < Sinatra::Base
       comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
       github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", MultiJson.dump(comment))
     end
+    PusherEvent.new('change_issue', { issue_number: params['num'], old_state: original_state, new_state: params['label'] })
     return 'success'
   end
 
