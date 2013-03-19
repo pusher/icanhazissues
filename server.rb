@@ -109,7 +109,10 @@ class App < Sinatra::Base
         @denied << issue
       end
     end
-    PusherEvent.new('ptk', { accepted: @accepted, denied: @denied })
+    PusherEvent.new('ptk', {
+      accepted: @accepted.collect{|i| { number: i['number'], reason: i['reason'] } },
+      denied: @denied.collect{|i| { number: i['number'], reason: i['reason'] } }
+    })
     erb :ptk_report
   end
 
