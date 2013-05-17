@@ -1,9 +1,22 @@
+<style type="text/css" media="screen">
+  * {
+    font-family: arial;
+  }
+  .accepted a {
+    color: #4BE800;
+  }
+  .declined a {
+    color: #FF9095;
+  }
+</style>
 <h2>The petitions have been decided!</h2>
 
 <h3>Accepted</h3>
 <% @accepted.each do |issue| %>
-  <div>
-    <h4 style="color:#008F54"><%= issue['title'] %></h4>
+  <div class="accepted">
+    <h4 style="color:#008F54">
+      <a href="<%= issue['html_url'] %>"><%= "#{issue['title']} - #{issue['number']}" %></a>
+    </h4>
     <% if !issue['reason'].blank? %>
     <p><%= issue['reason'] %></p>
     <% end %>
@@ -12,8 +25,10 @@
 
 <h3>Back to the swamp</h3>
 <% @denied.each do |issue| %>
-  <div>
-    <h4 style="color:#996900"><%= issue['title'] %></h4>
+  <div class="declined">
+    <h4>
+      <a href="<%= issue['html_url'] %>"><%= "#{issue['title']} - #{issue['number']}" %></a>
+    </h4>
     <% if !issue['reason'].blank? %>
     <p><%= issue['reason'] %></p>
     <% end %>

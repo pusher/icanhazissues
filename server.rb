@@ -57,9 +57,13 @@ class App < Sinatra::Base
     end
 
     def add_label(issue_num, label)
+      add_labels(issue_num, [label])
+    end
+
+    def add_labels(issue_num, labels)
       path = "repos/#{OWNER}/#{REPO}/issues/#{issue_num}/labels"
-      github_raw_request(:post, path, MultiJson.dump([label]))
-    end    
+      github_raw_request(:post, path, MultiJson.dump(labels))
+    end
 
     def github_raw_request(verb, path, body = nil, params={})
       url = "https://api.github.com/#{path}"
@@ -103,7 +107,7 @@ class App < Sinatra::Base
         github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", MultiJson.dump(comment))
       end
       if v[:accepted] == '1'
-        add_label(issue['number'], 'ready')
+        add_labels(issue['number'], ["ready", "ptk-#{Time.now.strftime('%d-%m-%y')}"])
         @accepted << issue
       else
         @denied << issue

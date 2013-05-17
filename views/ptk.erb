@@ -1,20 +1,34 @@
 <link rel="stylesheet" href="/stylesheets/forms.css" type="text/css" media="screen" title="no title" charset="utf-8">
+<style type="text/css" media="screen">
+  table {
+    width: 100%;
+  }
+  table textarea {
+    height: 100%;
+    width: 100%;
+  }
+</style>
 <h3>The petitions are in m'lud!</h3>
 
 <form action="/ptk_submission" method="post">
 <table>
 <% @issues.each do |issue| %>
   <tr>
-    <td><h4><%= issue['title'] %></h4>
+    <td colspan="4">
+        <img class="avatar" src="<%= issue['user']['avatar_url'] %>">
+      <h4><a href="<%= issue['html_url'] %>"><%= "#{issue['title']} - #{issue['number']}" %></a></h4>
+    </td>
+  </tr>
+  <tr>
+    <td class="comment-cell">
       <div class="comments">
-        <pre style="background: #FFECCB">
-          <%= issue['body']
- %>
-        </pre>
+        <% if !issue['body'].blank? %>
+        <pre style="background: #FFECCB"><%= issue['body']
+ %></pre>
+        <% end %>
         <% issue['comments'].each do |comment| %>
-          <pre><img src="<%= comment['user']['avatar_url'] %>">
-            <%= comment['body'] %>
-          </pre>
+          <img class="avatar" src="<%= comment['user']['avatar_url'] %>">
+          <pre><%= comment['body'] %></pre>
         <% end %>
       </div>  
     </td>

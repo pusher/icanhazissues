@@ -12,8 +12,11 @@
   padding: 5px;
 }
 .comments {
-  height: 100px;
+  height: 150px;
   overflow: scroll;
+}
+.comment-cell {
+  width: 50%;
 }
 .comments p {
   margin-bottom: 0.5em;
@@ -27,7 +30,7 @@ td{
   border-bottom: 5px solid #fff;
 }
 td h4 {
-  background: #990057;
+  background: #8CBCE6;
   color: #fff;
   font-weight: normal;
   padding: 0.2em;
@@ -39,7 +42,8 @@ table pre {
   border: 1px solid #6D7D99;
   padding: 5px;
 }
-pre img {
+img.avatar {
+  margin: 5px;
   float: left;
   width: 20px;
   height: 20px;
