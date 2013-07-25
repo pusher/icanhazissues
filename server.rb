@@ -107,7 +107,7 @@ class App < Sinatra::Base
         github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", MultiJson.dump(comment))
       end
       if v[:accepted] == '1'
-        add_labels(issue['number'], ["ready", "ptk-#{Time.now.strftime('%d-%m-%y')}"])
+        add_labels(issue['number'], ["ready", "p-#{Time.now.strftime('%Y-%m-%d')}"])
         @accepted << issue
       else
         @denied << issue
