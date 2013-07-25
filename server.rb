@@ -180,9 +180,11 @@ class App < Sinatra::Base
       report << "<h3>#{heading}</h3>"
 
       issue_labels.each do |issue, labels|
+        from_ptk = labels.find { |l| l.start_with?('p-', 'ptk-') }
         url = "https://github.com/pusher/pusher-server/issues/#{issue['number']}"
         report << "<a href='#{url}'>#{issue["number"]}</a>: " \
           "#{issue["title"]}\n"
+          report << "PTK: #{from_ptk}\n" if from_ptk
         # report << "⬠ #{labels.join(' ⬠ ')}\n"
         report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
         report << "\n"
