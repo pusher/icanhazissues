@@ -1,13 +1,18 @@
 function colourFromStaleness(date){
   var date = new Date(date)
   var now = new Date() 
-  var diff = ((now - date) /1000)
-  if (diff > 60 * 60 * 24 * 20){
-    return '#FF6B77'
-  } else if (diff > 60 * 60 * 24 * 10){
-    return '#FFAE6A'
+  var diff = now - date
+  var day = 24*60*60*1000
+  var startOfYesterday = now - (now % day) - day
+
+  if (date > startOfYesterday){
+    return '#83FF5F' // green
+  } else if (diff < 7 * day){
+    return '#DBFF5F' // yellow
+  } else if (diff < 14 * day){
+    return '#FFAE6A' // orange
   } else {
-    return '#B1FF72'
+    return '#FF6B77' // red
   }
 }
 
