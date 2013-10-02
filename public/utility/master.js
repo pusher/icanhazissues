@@ -69,7 +69,7 @@ function resizeBoard(columnSets, remainderColumnSets) {
   var boardHeight = window.innerHeight - $('.titles').height()
   $('.columns').height(boardHeight)
 
-  if ((columnSets.length > 0) && (remainderColumnSets.length > 0)) {
+  if ((columnSets.length > 1) && (remainderColumnSets.length > 0)) {
     // Give half the height to swimlanes, half to other
     // Subtract 2px for each to account for the px bottom border
     swimlaneHeight = (boardHeight / 2) / columnSets.length - 2
