@@ -170,13 +170,13 @@ class App < Sinatra::Base
       elsif labels.include?('ops')
         ['Operations', nil]
       else
-        ['Other tech', nil]
+        ['Engineering', nil]
       end
     end.sort_by do |(milestone_title, milestone), _|
       # Show oldest milestones first
-      milestone ? milestone["created_at"] : "Z#{milestone_title}"
+      milestone ? milestone["created_at"] : "0#{milestone_title}"
     end.each do |(milestone_title, milestone), issue_labels|
-      heading = "MILESTONE: #{milestone_title} (#{issue_labels.size})"
+      heading = "SWIMLANE: #{milestone_title} (#{issue_labels.size})"
       report << "<h3>#{heading}</h3>"
 
       issue_labels.each do |issue, labels|
