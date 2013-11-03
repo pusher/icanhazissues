@@ -1,42 +1,128 @@
 <link rel="stylesheet" href="/stylesheets/forms.css" type="text/css" media="screen" title="no title" charset="utf-8">
-<style type="text/css" media="screen">
-  table {
-    width: 100%;
-  }
-  table textarea {
-    height: 100%;
-    width: 100%;
-  }
-</style>
-<h3>The petitions are in m'lud!</h3>
 
-<form action="/ptk_submission" method="post">
-<table>
-<% @issues.each do |issue| %>
-  <tr>
-    <td colspan="4">
-        <img class="avatar" src="<%= issue['user']['avatar_url'] %>">
-      <h4><a href="<%= issue['html_url'] %>"><%= "#{issue['title']} - #{issue['number']}" %></a></h4>
-    </td>
-  </tr>
-  <tr>
-    <td class="comment-cell">
-      <div class="comments">
-        <% if !issue['body'].blank? %>
-        <pre style="background: #FFECCB"><%= issue['body']
- %></pre>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css">
+
+<script src="../lib/jquery-1.7.2.min.js"></script>
+<script src="../lib/jquery-ui-1.8.22.custom.min.js"></script>
+<script src="/ptk/views/main_issue_view.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" charset="utf-8">
+  var priorityIssues = <%= MultiJson.dump( @issues ) %>
+  var accepted = []
+  var denied = []
+  var priorityIssuesLength = priorityIssues.length
+
+  $().ready(function(){
+    priorityIssues.forEach(function(issue){
+      $('#priority').append( new MainIssueView(issue).html )
+    })
+    $('#ptk_form').hide()
+  })
+
+  function accept(issue){
+    priorityIssuesLength--
+    accepted.push(issue)
+    redraw()
+    if (priorityIssuesLength == 0){
+      initSubmission()
+    }
+  }
+
+  function deny(issue){
+    priorityIssuesLength--
+    denied.push(issue)
+    redraw();
+    if (priorityIssuesLength == 0){
+      initSubmission()
+    }
+  }
+
+  function initSubmission(){
+    $('#ptk_form').show();
+    accepted.forEach(function(issue){
+      $('#ptk_form').append($('<input type="hidden" name="issues['+issue.id+'][accepted]" value="1"/>'))
+    })
+    denied.forEach(function(issue){
+      $('#ptk_form').append($('<input type="hidden" name="issues['+issue.id+'][accepted]" value="0"/>'))
+    })
+  }
+
+  var SmallIssueView = function(issue){
+    this.html = $('<p>'+ issue.title +' </p>')
+    var backBtn = $(' - <a href="#">x</a>')
+    backBtn.data('issue', issue)
+    backBtn.click(function(){
+      var issue = $(this).data('issue')
+      removeItem(issue)
+      return false;
+    })
+    this.html.append(backBtn)
+  }
+
+  function removeItem(issue){
+    priorityIssuesLength++
+    $('#ptk_form').hide()
+    var index = denied.indexOf(issue);
+    if (index > -1) {
+      denied.splice(index, 1);
+    }
+    var index = accepted.indexOf(issue);
+    if (index > -1) {
+      accepted.splice(index, 1);
+    }
+    $('#priority').append( new MainIssueView(issue).html )
+    redraw()
+  }
+
+  function redraw(){
+    $('#swamp').empty()
+    denied.forEach(function(issue){
+      $('#swamp').append( new SmallIssueView(issue).html )
+    })
+    $('#ready').empty()
+    accepted.forEach(function(issue){
+      $('#ready').append( new SmallIssueView(issue).html )
+    })
+  }
+</script>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-2">
+      <h3>The swamp</h3>
+      <div id="swamp"></div>
+    </div>
+
+
+    <div class="col-md-6">
+      <h3>The petitions are in m'lud!</h3>
+
+      <div id="priority"></div>
+
+      <form action="/ptk_submission" method="post" id="ptk_form">
+      <p class="lead">Are you sure you want to commit to including these stories?</p>
+      <p><input type="submit"></p>
+      </form>
+
+    </div>
+    <div class="col-md-2">
+      <h3>Added</h3>
+
+      <div id="ready">Nothing yet</div>
+
+      <h3>Existing</h3>
+
+      <div>
+        <% @existing.each do |issue| %>
+          <p>
+            <%= issue['number'] %>
+          <%= issue['title'] %>
+          </p>
         <% end %>
-        <% issue['comments'].each do |comment| %>
-          <img class="avatar" src="<%= comment['user']['avatar_url'] %>">
-          <pre><%= comment['body'] %></pre>
-        <% end %>
-      </div>  
-    </td>
-    <td class="accept"><input type="radio" name="issues[<%= issue['id'] %>][accepted]" value="1" checked="checked" required="required"></td>
-    <td class="deny"><input type="radio" name="issues[<%= issue['id'] %>][accepted]" value="0" required="required"></td>
-    <td><textarea rows="5" cols="40" name="issues[<%= issue['id'] %>][comment]"></textarea></td>
-  </tr>
-<% end %>
-</table>
-<input type="submit">
-</form>
+      </div>
+
+
+    </div>
+  </div>
+</div>

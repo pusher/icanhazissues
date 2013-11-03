@@ -89,7 +89,8 @@ class App < Sinatra::Base
   get '/ptk' do
     authenticate!
     @issues = fetch_issues({ labels: 'priority' })
-    @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
+    @existing = ['ready', 'development', 'review', 'release'].collect {|a| fetch_issues({ labels: a }) }.flatten!
+    # @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
     erb :ptk
   end
 

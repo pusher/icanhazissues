@@ -12,7 +12,7 @@
   padding: 5px;
 }
 .comments {
-  height: 150px;
+  max-height: 150px;
   overflow: scroll;
 }
 .comment-cell {
@@ -42,9 +42,23 @@ table pre {
   border: 1px solid #6D7D99;
   padding: 5px;
 }
+table textarea {
+  height: 100%;
+  width: 100%;
+}
 img.avatar {
   margin: 5px;
   float: left;
   width: 20px;
   height: 20px;
+}
+.shifter {
+  height: 30px;
+  line-height: 30px;
+  display: block;
+  text-align: center;
+}
+.shifter:hover {
+  text-decoration: none;
+  background: orange;
 }
