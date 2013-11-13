@@ -39,11 +39,12 @@
 
   function initSubmission(){
     $('#ptk_form').show();
+    $('.hidden-atttr').remove()
     accepted.forEach(function(issue){
-      $('#ptk_form').append($('<input type="hidden" name="issues['+issue.id+'][accepted]" value="1"/>'))
+      $('#ptk_form').append($('<input class="hidden-atttr" type="hidden" name="issues['+issue.id+'][accepted]" value="1"/>'))
     })
     denied.forEach(function(issue){
-      $('#ptk_form').append($('<input type="hidden" name="issues['+issue.id+'][accepted]" value="0"/>'))
+      $('#ptk_form').append($('<input class="hidden-atttr" type="hidden" name="issues['+issue.id+'][accepted]" value="0"/>'))
     })
   }
 
