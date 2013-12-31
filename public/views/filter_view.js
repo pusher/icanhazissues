@@ -42,32 +42,31 @@ var LabelFilterView = function(labels, filters){
   })
 }
 
-var LabelCheckBoxView = function(label, filters){
-  this.html = $('<p>')
-  this.html.append('<label for="labels_'+label.name+'">'+label.name+' </label>')
-  var checkbox = $('<input type="checkbox" name="filters[labels][]" value="'+label.name+'">')
-  if ( filters && filters.labels && _.detect(filters.labels, function(a) { return a == label.name }) != null )
-    checkbox.attr('checked', 'checked')
-  this.html.append(checkbox)
-  
-  checkbox.change(function(){
-    davisRequestFromForm( $( $(this).context.form ) );
-  })
-}
-
 var CheckBoxView = function(name, field, filters){
   this.html = $('<p>')
-  this.html.append('<label for="labels_'+ field +'">'+ field +' </label>')
   var checkbox = $('<input type="checkbox" name="filters['+name+'][]" value="'+field+'">')
   if ( filters && filters[name] && _.detect(filters[name], function(a) { return a == field }) != null )
     checkbox.attr('checked', 'checked')
   this.html.append(checkbox)
+  this.html.append('<label for="labels_'+ field +'">'+ field +' </label>')
   
   checkbox.change(function(){
     davisRequestFromForm( $( $(this).context.form ) );
   })
 }
 
+var LabelCheckBoxView = function(label, filters){
+  this.html = $('<p>')
+  var checkbox = $('<input type="checkbox" name="filters[labels][]" value="'+label.name+'">')
+  if ( filters && filters.labels && _.detect(filters.labels, function(a) { return a == label.name }) != null )
+    checkbox.attr('checked', 'checked')
+  this.html.append(checkbox)
+  this.html.append('<label for="labels_'+label.name+'">'+label.name+' </label>')
+  
+  checkbox.change(function(){
+    davisRequestFromForm( $( $(this).context.form ) );
+  })
+}
 
 var LabelBarView = function(labels){
   var self = this;
