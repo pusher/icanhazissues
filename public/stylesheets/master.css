@@ -26,6 +26,10 @@ body {
   color: #fff;
   font-weight: normal;
 }
+.columns {
+  overflow-y: scroll;
+  overflow-x: visible;
+}
 .columns .column {
   float: left;
 }
@@ -34,10 +38,6 @@ body {
 }
 .columns .column.even {
   background: #F0F8FF;
-}
-.drop {
-  height: 100%;
-  overflow: scroll;
 }
 .issue {
   margin: 0.4em;
@@ -209,6 +209,7 @@ html[xmlns] .clearfix {
   margin: 0.7em 0;
 }
 .swimlane {
+  position:relative;
   box-sizing:border-box;
   -moz-box-sizing:border-box; /* Firefox */
   -webkit-box-sizing:border-box; /* Safari */

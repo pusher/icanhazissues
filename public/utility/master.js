@@ -15,8 +15,7 @@ var ColumnSet = function(states, issues, parent, laneName, height){
     this._el = parent
   } else {
     this._el = $('<div class="swimlane"></div>')
-    this._el.height(height)
-    parent.append( $('<div class="htext">'+laneName+'</div>'))
+    this._el.append( $('<div class="htext">'+laneName+'</div>'))
     parent.append(this._el)
   }
 
@@ -26,11 +25,9 @@ var ColumnSet = function(states, issues, parent, laneName, height){
     self._el.append(c.html)
   })
 
+  this._el.append($('<div style="clear: both"></div>'))
+
   this.addIssues(issues)
-  
-  this.setHeight = function(height){
-    self._el.height(height)
-  }
 }
 ColumnSet.prototype.addIssue = function(issue){
   if (this._columns[issue.state])
@@ -65,25 +62,17 @@ function initIssueHash(issues){
   })
 }
 
-function resizeBoard(columnSets, remainderColumnSets) {
+function resizeBoard(){
   var boardHeight = window.innerHeight - $('.titles').height()
   $('.columns').height(boardHeight)
 
-  if ((columnSets.length > 1) && (remainderColumnSets.length > 0)) {
-    // Give half the height to swimlanes, half to other
-    // Subtract 2px for each to account for the px bottom border
-    swimlaneHeight = (boardHeight / 2) / columnSets.length - 2
-    remainderHeight = (boardHeight / 2) / remainderColumnSets.length - 2
-  } else {
-    // Split height evenly
-    rows = columnSets.length + remainderColumnSets.length
-    swimlaneHeight = remainderHeight = (boardHeight / rows) - 2
-  }
-  columnSets.forEach(function(columnSet){
-    columnSet.setHeight(swimlaneHeight)
-  })
-  remainderColumnSets.forEach(function(columnSet){
-    columnSet.setHeight(remainderHeight)
+  $('.swimlane').each(function(i, e) {
+    var swimlane = $(e);
+    var heights = swimlane.find('.drop').map(function(i, e) {return e.scrollHeight});
+    heights.push(100);
+
+    var newHeight = Math.max.apply(Math, heights);
+    swimlane.find('.drop').height(newHeight);
   })
 }
 
@@ -164,9 +153,9 @@ function initBoard(states, issues, milestones){
   } else {
     columnSets.push(new ColumnSet(states, issues, $('.columns')) )
   }
-  resizeBoard(columnSets, remainderColumnSets)
+  resizeBoard()
   $(window).resize(function(){
-    resizeBoard(columnSets, remainderColumnSets)
+    resizeBoard()
   })
   
   allowPopup();

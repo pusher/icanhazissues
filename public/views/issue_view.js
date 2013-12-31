@@ -116,6 +116,7 @@ var ColumnView = function(phase){
       issue.state = phase
   		$(ui.draggable).css({ left: 0, top: 0})
   		$(this).find('.drop').append( $(ui.draggable) )
+      resizeBoard();
   	},
   	over: function(event, ui) { 
       $(this).addClass('over')
