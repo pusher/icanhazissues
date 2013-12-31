@@ -2,22 +2,15 @@ var SideBarView = function(filters, labels, milestones){
   var self = this;
   this.html = $('#filterFormTemplate').clone();
   this.html.attr('id', null)
-  
+
   this.html.find('.filterForm').append( new LabelFilterView(labels, filters).html )
-  
-  this.html.find('.filterForm').append( new CreatorFilterView(['maxthelion', 'mloughran', 'leggetter', 'cultureulterior', 'pl', 'dctanner', 'richcaudle', 'DanielWaterworth', 'sylg'], filters).html )
-  
+  this.html.find('.filterForm').append( new CreatorFilterView(['maxthelion', 'mloughran', 'leggetter', 'cultureulterior', 'pl', 'DanielWaterworth', 'mdpye', 'sylg'], filters).html )
   this.html.find('.filterForm').append( new MilestoneFilterView(milestones, filters).html )
-  
-  
   this.html.find('.filterForm').append('<br><br><br>')
   this.html.append(new LabelBarView(labels).html.hide() )
-  
 }
 
-var FilterView = function(){
-  
-}
+var FilterView = function(){ }
 
 var MilestoneFilterView = function(milestones, filters){
   var self = this;
@@ -28,7 +21,6 @@ var MilestoneFilterView = function(milestones, filters){
     self.html.append( new CheckBoxView('milestone', milestone.title, filters).html )
   })
 }
-
 
 var CreatorFilterView = function(creators, filters){
   var self = this;
