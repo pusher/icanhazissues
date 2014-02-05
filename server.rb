@@ -160,6 +160,10 @@ class App < Sinatra::Base
 
     report = "[iteration-end] #{@issues.size} stories done\n\n"
 
+    beneficiary_stats = Hash.new { |h,k| h[k] = 0 }
+    ptk_count = 0
+    adhoc_count = 0
+
     @issues.map do |issue|
       # Extract labels into [String]
       labels = issue["labels"].map { |l| l["name"] }.sort - ["done"]
@@ -182,15 +186,34 @@ class App < Sinatra::Base
 
       issue_labels.each do |issue, labels|
         from_ptk = labels.find { |l| l.start_with?('p-', 'ptk-') }
+        ptk_count += 1 if from_ptk
         url = "https://github.com/pusher/pusher-server/issues/#{issue['number']}"
+
+        beneficiaries = labels.select { |l| %w{engineering customer internal}.include?(l) }
+        beneficiaries.each { |b| beneficiary_stats[b] += 1 }
+
+        adhoc = labels.include?("adhoc")
+        adhoc_count += 1 if adhoc
+
         report << "<a href='#{url}'>#{issue["number"]}</a>: " \
           "#{issue["title"]}\n"
-          report << "PTK: #{from_ptk}\n" if from_ptk
+
+        why = []
+        why << "<b>ADHOC</b>" if adhoc
+        why << "PTK: #{from_ptk}" if from_ptk
+        why << "Beneficiary: #{beneficiaries.join(', ')}" if beneficiaries.any?
+        report << "#{why.join(' | ')}\n" if why.any?
+
         # report << "⬠ #{labels.join(' ⬠ ')}\n"
         report << "★ #{issue['assignee']['login']} ★\n" if issue['assignee']
         report << "\n"
       end
     end
+
+    report << "<h3>Stats</h3>"
+    report << "Beneficiaries: #{beneficiary_stats}\n"
+    report << "Number of PTK'ed stories done: #{ptk_count}\n"
+    report << "Number of adhoc stories: #{adhoc_count}\n"
 
     return '<pre>' + report + '</pre>'
   end
