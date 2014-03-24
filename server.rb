@@ -9,7 +9,7 @@ end
 
 class PusherEvent
   def initialize(event, params={})
-    RestClient.post('dradis-prod.herokuapp.com/events', {event: { name: event, params: params }})
+    RestClient.post('eventinator.io/events', {event: { name: event, params: params }})
   end
 end
 
