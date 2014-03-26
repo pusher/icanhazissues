@@ -83,7 +83,7 @@ class App < Sinatra::Base
 
   get '/' do
     authenticate!
-    redirect '/board#/backlog'
+    redirect '/board#/kanban'
   end
 
   get '/ptk' do
