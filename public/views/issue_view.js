@@ -24,6 +24,7 @@ var IssueView = function(issue){
   this.template.find('h4 a').attr('href',  issue.html_url)
   this.template.find('h4 a').attr('target',  '_blank')
   this.template.css('-webkit-transform', 'rotate('+(-0.5 + Math.random() * 3) +'deg)')
+  this.template.css('transform', 'rotate('+(-0.5 + Math.random() * 3) +'deg)')
   this.template.attr('id', issue.id)
   this.template.data('number', issue.number);
   this.template.css('background', colourFromStaleness(issue.updated_at));
@@ -77,6 +78,7 @@ var IssueView = function(issue){
     var rotate = 'rotate('+(-10 + Math.random() * 20) +'deg)'
     avatar.css('-webkit-transform', rotate)
     avatar.css('-moz-transform', rotate)
+    avatar.css('transform', rotate)
 
     this.template.append(avatar)
   }
@@ -85,6 +87,7 @@ var IssueView = function(issue){
 var StickerView = function(label){
   this.html = $('<a href="#" class="sticker" style="background:'+label.color+'"></a>')
   this.html.css('-webkit-transform', 'rotate('+(-5 + Math.random() * 10) +'deg)')
+  this.html.css('transform', 'rotate('+(-5 + Math.random() * 10) +'deg)')
 }
 
 var ColumnView = function(phase){
