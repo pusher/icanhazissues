@@ -89,7 +89,7 @@ function initBoard(states, issues, milestones){
   })
   // remove pull requests 
   issues = _.filter(issues, function(issue){
-    return issue.pull_request.patch_url == null
+    return issue.pull_request == null || issue.pull_request.patch_url == null
   })
   initIssueHash(issues)
   states.forEach(function(state){
