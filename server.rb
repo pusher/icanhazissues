@@ -1,7 +1,9 @@
 # encoding: utf-8
 require 'airbrake'
 require 'rest-client'
-
+require 'sinatra/base'
+require 'sinatra_auth_github'
+require 'multi_json'
 
 Airbrake.configure do |config|
   config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
