@@ -95,6 +95,11 @@ class App < Sinatra::Base
     def authenticate!
       redirect to("/auth/github") unless github_user
     end
+
+    def logout!
+      session.clear
+      redirect to ("/")
+    end
   end
 
   get '/auth/:name/callback' do
@@ -272,11 +277,10 @@ class App < Sinatra::Base
   post '/labels' do
     authenticate!
     params['label']['color'].gsub!(/^#/, '')
-    return github_raw_request(:post, "repos/#{OWNER}/#{REPO}/labels", JSON.dump(params['label']))
+    return github_raw_request(:post, "repos/#{OWNER}/#{REPO}/labels", params['label'])
   end
 
   get '/logout' do
     logout!
-    redirect 'https://github.com'
   end
 end
