@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
-gem 'sinatra'
+gem 'airbrake'
+gem 'omniauth-github'
 gem 'rack'
-gem 'sinatra_auth_github'
-gem 'multi_json'
-gem "airbrake"
+gem 'rest-client'
+gem 'sinatra'

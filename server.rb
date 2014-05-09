@@ -1,7 +1,9 @@
 # encoding: utf-8
 require 'airbrake'
+require 'json'
+require 'omniauth-github'
 require 'rest-client'
-
+require 'sinatra/base'
 
 Airbrake.configure do |config|
   config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
@@ -13,15 +15,23 @@ class PusherEvent
   end
 end
 
+GithubUser = Struct.new(:id, :login, :token)
+def GithubUser.from_auth(data)
+  # require 'pp'; pp data
+  new(data["uid"], data["info"]["nickname"], data["credentials"]["token"])
+end
+
 class App < Sinatra::Base
   use Airbrake::Rack
   enable :raise_errors
   enable :sessions
-  set :public_folder, File.join(File.dirname(__FILE__), 'public')
+  set :public_folder, File.expand_path('../public', __FILE__)
 
-  set :github_options, GITHUB_CREDS
+  set :protection, except: [:frame_options]
 
-  register Sinatra::Auth::Github
+  use OmniAuth::Builder do
+    provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'], scope: "repo"
+  end
 
   helpers do
 
@@ -35,7 +45,7 @@ class App < Sinatra::Base
     end
     
     def pag(response)
-      new_issues = MultiJson.load(response)
+      new_issues = JSON.load(response)
       if new_issues.length == 100 && response.headers[:link] =~ /^.*\<([^>]+)\>; rel="next",.*$/
         next_link = response.headers[:link].gsub(/^.*\<([^>]+)\>; rel="next",.*$/, "\\1")
         new_issues + pag(RestClient.get(next_link))
@@ -62,7 +72,7 @@ class App < Sinatra::Base
 
     def add_labels(issue_num, labels)
       path = "repos/#{OWNER}/#{REPO}/issues/#{issue_num}/labels"
-      github_raw_request(:post, path, MultiJson.dump(labels))
+      github_raw_request(:post, path, JSON.dump(labels))
     end
 
     def github_raw_request(verb, path, body = nil, params={})
@@ -77,8 +87,20 @@ class App < Sinatra::Base
     end
 
     def github_request(verb, path, params={})
-      MultiJson.load(github_raw_request(verb, path, nil, params))
+      JSON.load(github_raw_request(verb, path, nil, params))
     end
+
+    def github_user; session[:user]; end
+
+    def authenticate!
+      redirect to("/auth/github") unless github_user
+    end
+  end
+
+  get '/auth/:name/callback' do
+    auth = request.env["omniauth.auth"]
+    session[:user] = GithubUser.from_auth(auth)
+    redirect '/'
   end
 
   get '/' do
@@ -90,7 +112,7 @@ class App < Sinatra::Base
     authenticate!
     @issues = fetch_issues({ labels: 'priority' })
     @existing = ['ready', 'development', 'review', 'release'].collect {|a| fetch_issues({ labels: a }) }.flatten!
-    # @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
+    # @issues.collect{|i| i['comments'] = JSON.load( get_comments(i) )}
     erb :ptk
   end
 
@@ -105,7 +127,7 @@ class App < Sinatra::Base
       remove_old_labels(issue)
       if !v['comment'].blank?
         comment = { :body =>  v['comment'] }
-        github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", MultiJson.dump(comment))
+        github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", JSON.dump(comment))
       end
       if v[:accepted] == '1'
         add_labels(issue['number'], ["ready", "p-#{Time.now.strftime('%Y-%m-%d')}"])
@@ -124,20 +146,20 @@ class App < Sinatra::Base
   get '/done' do
     authenticate!
     @issues = fetch_issues({ labels: 'done' })
-    @issues.collect{|i| i['comments'] = MultiJson.load( get_comments(i) )}
+    @issues.collect{|i| i['comments'] = JSON.load( get_comments(i) )}
     erb :done
   end
 
   get '/issues.js' do
     issues = fetch_issues
     content_type "application/javascript"
-    return "var issues = #{MultiJson.dump(issues)}"
+    return "var issues = #{JSON.dump(issues)}"
   end
   
   get '/milestones.js' do
     milestones = github_request(:get, "repos/#{OWNER}/#{REPO}/milestones")
     content_type "application/javascript"
-    return "var milestones = #{MultiJson.dump(milestones)}"
+    return "var milestones = #{JSON.dump(milestones)}"
   end
 
   get '/board' do
@@ -148,7 +170,7 @@ class App < Sinatra::Base
   get '/labels.js' do
     labels = github_request(:get, "repos/#{OWNER}/#{REPO}/labels", { :per_page => 100 })
     content_type "application/javascript"
-    return "var labels = #{MultiJson.dump(labels)}"
+    return "var labels = #{JSON.dump(labels)}"
   end
 
   get '/done.txt' do
@@ -222,7 +244,7 @@ class App < Sinatra::Base
     authenticate!
     puts params['issue']
     path = "repos/#{OWNER}/#{REPO}/issues"
-    return github_raw_request(:post, path, MultiJson.dump(params['issue']) )
+    return github_raw_request(:post, path, JSON.dump(params['issue']) )
   end
 
   post '/set_phase/:num' do
@@ -235,7 +257,7 @@ class App < Sinatra::Base
     unless params['label'] == "" || params['label'] == 'priority' || (params['label'] == 'ready' && (old_labels & %w(development done review release)).empty?)
       original_state = old_labels.empty? ? 'backlog' : old_labels.collect{|c| c['name']}.join(', ')
       comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
-      github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", MultiJson.dump(comment))
+      github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", JSON.dump(comment))
     end
     PusherEvent.new('change_issue', { issue_number: params['num'], old_state: original_state, new_state: params['label'], user: github_user.login })
     return 'success'
@@ -250,7 +272,7 @@ class App < Sinatra::Base
   post '/labels' do
     authenticate!
     params['label']['color'].gsub!(/^#/, '')
-    return github_raw_request(:post, "repos/#{OWNER}/#{REPO}/labels", MultiJson.dump(params['label']))
+    return github_raw_request(:post, "repos/#{OWNER}/#{REPO}/labels", JSON.dump(params['label']))
   end
 
   get '/logout' do
