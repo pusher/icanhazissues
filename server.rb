@@ -27,6 +27,8 @@ class App < Sinatra::Base
   enable :sessions
   set :public_folder, File.expand_path('../public', __FILE__)
 
+  set :protection, except: [:frame_options]
+
   use OmniAuth::Builder do
     provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'], scope: "repo"
   end
