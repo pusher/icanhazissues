@@ -62,7 +62,6 @@ PLATFORMS
 
 DEPENDENCIES
   airbrake
-  multi_json
   rack
   sinatra
   sinatra_auth_github
