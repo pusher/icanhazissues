@@ -1,9 +1,9 @@
 # encoding: utf-8
 require 'airbrake'
+require 'json'
+require 'omniauth-github'
 require 'rest-client'
 require 'sinatra/base'
-require 'sinatra_auth_github'
-require 'json'
 
 Airbrake.configure do |config|
   config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
@@ -15,15 +15,21 @@ class PusherEvent
   end
 end
 
+GithubUser = Struct.new(:id, :login, :token)
+def GithubUser.from_auth(data)
+  # require 'pp'; pp data
+  new(data["uid"], data["info"]["nickname"], data["credentials"]["token"])
+end
+
 class App < Sinatra::Base
   use Airbrake::Rack
   enable :raise_errors
   enable :sessions
-  set :public_folder, File.join(File.dirname(__FILE__), 'public')
+  set :public_folder, File.expand_path('../public', __FILE__)
 
-  set :github_options, GITHUB_CREDS
-
-  register Sinatra::Auth::Github
+  use OmniAuth::Builder do
+    provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'], scope: "repo"
+  end
 
   helpers do
 
@@ -81,6 +87,18 @@ class App < Sinatra::Base
     def github_request(verb, path, params={})
       JSON.load(github_raw_request(verb, path, nil, params))
     end
+
+    def github_user; session[:user]; end
+
+    def authenticate!
+      redirect to("/auth/github") unless github_user
+    end
+  end
+
+  get '/auth/:name/callback' do
+    auth = request.env["omniauth.auth"]
+    session[:user] = GithubUser.from_auth(auth)
+    redirect '/'
   end
 
   get '/' do
