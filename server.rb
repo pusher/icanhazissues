@@ -12,7 +12,9 @@ end
 
 class PusherEvent
   def initialize(event, params={})
-    Excon.post 'http://eventinator.io/events', JSON.dump(event: { name: event, params: params }, api_key: 'ZrFlFOxPvVgKuCH788L0ZnBM8G8')
+    cli = Excon.new('http://eventinator.io')
+    body = JSON.dump(event: { name: event, params: params }, api_key: 'ZrFlFOxPvVgKuCH788L0ZnBM8G8')
+    cli.request(method: 'POST', path: '/events', body: body)
   end
 end
 
