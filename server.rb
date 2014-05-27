@@ -60,11 +60,11 @@ class App < Sinatra::Base
       response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, opts.merge({ :per_page => 100 }))
       pag(response)
     end
-    
+
     def pag(response)
       new_issues = response
-      puts "Size: #{response.size}, Link header: #{response.headers['Link']}"
-      if response.headers["Link"] =~ /^.*([^\s]+)\s*;\s*rel="next"$/
+      puts "Size: #{response.size}, type #{new_issues.class}, Link header: #{response.headers['Link']}"
+      if response.headers["Link"] =~ /<https:\/\/api\.github\.com([^>]+)>;\s*rel="next"/
         next_link = $1
         puts "Following next link: #{next_link}"
         new_issues + pag(github_raw_request(:get, next_link))
@@ -72,7 +72,7 @@ class App < Sinatra::Base
         new_issues
       end
     end
-    
+
     def remove_old_labels(issue)
       old_labels = []
       issue['labels'].each do |label|
