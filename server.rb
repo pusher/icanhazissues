@@ -57,15 +57,16 @@ class App < Sinatra::Base
     end
 
     def fetch_issues(opts={})
-      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, opts.merge({ :per_page => 1000 }))
+      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues", nil, opts.merge({ :per_page => 100 }))
       pag(response)
     end
     
     def pag(response)
       new_issues = response
+      puts "Size: #{response.size}, Link header: #{response.headers['Link']}"
       if response.headers["Link"] =~ /^.*([^\s]+)\s*;\s*rel="next"$/
         next_link = $1
-        p [:next_link, next_link]
+        puts "Following next link: #{next_link}"
         new_issues + pag(github_raw_request(:get, next_link))
       else
         new_issues
