@@ -1,6 +1,4 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
-require 'github_creds'
-
 require 'faraday'
 require 'excon'
 Faraday.default_adapter = :excon
