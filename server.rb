@@ -1,20 +1,17 @@
 # encoding: utf-8
-require 'airbrake'
 require 'json'
 require 'omniauth-github'
 require 'sinatra/base'
 require 'forwardable'
 require 'excon'
 
-Airbrake.configure do |config|
-  config.api_key = '19f6adfd17663c1c5f283ea11a5e4f25'
-end
-
 class PusherEvent
   def initialize(event, params={})
-    cli = Excon.new('http://eventinator.io')
-    body = JSON.dump(event: { name: event, params: params }, api_key: 'ZrFlFOxPvVgKuCH788L0ZnBM8G8')
-    cli.request(method: 'POST', path: '/events', body: body)
+    if EVENTINATOR_KEY
+      cli = Excon.new('http://eventinator.io')
+      body = JSON.dump(event: { name: event, params: params }, api_key: EVENTINATOR_KEY)
+      cli.request(method: 'POST', path: '/events', body: body)
+    end
   end
 end
 
@@ -39,7 +36,6 @@ module ExconResponse
 end
 
 class App < Sinatra::Base
-  use Airbrake::Rack
   enable :raise_errors
   enable :sessions
   set :public_folder, File.expand_path('../public', __FILE__)
@@ -47,13 +43,13 @@ class App < Sinatra::Base
   set :protection, except: [:frame_options]
 
   use OmniAuth::Builder do
-    provider :github, ENV['GITHUB_KEY'], ENV['GITHUB_SECRET'], scope: "repo"
+    provider :github, GITHUB_KEY, GITHUB_SECRET, scope: "repo"
   end
 
   helpers do
 
     def get_comments(issue, opts={})
-      response = github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", nil, opts.merge({ :per_page => 100 }))
+      github_raw_request(:get, "repos/#{OWNER}/#{REPO}/issues/#{issue['number']}/comments", nil, opts.merge({ :per_page => 100 }))
     end
 
     def fetch_issues(opts={})

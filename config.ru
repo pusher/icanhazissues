@@ -3,6 +3,7 @@ require 'faraday'
 require 'excon'
 Faraday.default_adapter = :excon
 
+# Config
 COLUMNS = [
   'ready',
   'development',
@@ -12,8 +13,12 @@ COLUMNS = [
   'priority'
 ]
 
-OWNER = 'pusher'
-REPO = 'pusher-server'
+OWNER = ENV['GITHUB_ORG'] || 'pusher'
+REPO = ENV['GITHUB_REPO'] || 'icanhazissues'
+
+GITHUB_KEY = ENV['GITHUB_KEY']
+GITHUB_SECRET = ENV['GITHUB_SECRET']
+EVENTINATOR_KEY = ENV['EVENTINATOR_KEY']
 
 require './server.rb'
 
