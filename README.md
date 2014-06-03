@@ -3,6 +3,8 @@ icanhazissues
 
 Teh kanban. Full of kitteh.
 
+![screenshot](screenshot.png)
+
 icanhasissues adds a kanban view to any github issues repo. We use it to
 triage and do scrumm-like activities.
 
