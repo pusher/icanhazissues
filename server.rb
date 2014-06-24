@@ -4,14 +4,14 @@ require 'omniauth-github'
 require 'sinatra/base'
 require 'forwardable'
 require 'excon'
+require 'restclient'
 
 class PusherEvent
   def initialize(event, params={})
-    if EVENTINATOR_KEY
-      cli = Excon.new('http://eventinator.io')
-      body = JSON.dump(event: { name: event, params: params }, api_key: EVENTINATOR_KEY)
-      cli.request(method: 'POST', path: '/events', body: body)
-    end
+    RestClient.post('eventinator.io/events',
+                    event: { name: event, params: params },
+                    api_key: EVENTINATOR_KEY,
+                    )
   end
 end
 
