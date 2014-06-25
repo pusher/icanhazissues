@@ -285,7 +285,15 @@ class App < Sinatra::Base
       comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
       github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", comment)
     end
-    PusherEvent.new('change_issue', { issue_number: params['num'], old_state: original_state, new_state: params['label'], user: github_user.login })
+    PusherEvent.new('change_issue', { 
+      issue: {
+        num: params['num'],
+        title: issue['title'],
+        old_state: original_state, 
+        new_state: params['label']
+      },
+      user: github_user.login 
+    })
     return 'success'
   end
 
