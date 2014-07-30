@@ -216,3 +216,11 @@ html[xmlns] .clearfix {
   -webkit-box-sizing:border-box; /* Safari */
   border-bottom: #303B99 solid 2px;
 }
+
+.new-issue {
+  position: absolute;
+  display: block;
+  top: 3px;
+  right: 3px;
+  padding: 4px;
+}
