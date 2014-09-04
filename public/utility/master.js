@@ -118,35 +118,15 @@ function initBoard(states, issues, milestones){
         )
       }
     })
-    var rejectedIssues = _.filter(issues, function(issue){
+    var uncategorisedIssues = _.filter(issues, function(issue){
       return issue.milestone == null
-    })
-    var opsIssues = [] 
-    var devIssues = [] 
-    rejectedIssues.forEach(function(issue){
-      if (_.detect(issue.labels, function(label){
-        return label.name == 'ops';
-      }) == null){
-        devIssues.push(issue)
-      } else {
-        opsIssues.push(issue)
-      }
     })
     remainderColumnSets.push(
       new ColumnSet(
-        states, 
-        devIssues, 
+        states,
+        uncategorisedIssues,
         $('.columns'),
-        'all', 
-        "200px"
-      )
-    )
-    remainderColumnSets.push( 
-      new ColumnSet(
-        states, 
-        opsIssues, 
-        $('.columns'),
-        'all ops', 
+        'Uncategorised',
         "200px"
       )
     )
