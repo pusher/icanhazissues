@@ -6,12 +6,16 @@ require 'forwardable'
 require 'excon'
 require 'restclient'
 
-class PusherEvent
-  def initialize(event, params={})
-    RestClient.post('eventinator.io/events',
-                    event: { name: event, params: params },
-                    api_key: EVENTINATOR_KEY,
-                    )
+module PusherEvent
+  def self.record(event, params={})
+    begin
+      RestClient.post('eventinator.io/events',
+        event: { name: event, params: params },
+        api_key: EVENTINATOR_KEY,
+      )
+    rescue => e
+      puts "Error from eventinator: #{e}"
+    end
   end
 end
 
@@ -162,7 +166,7 @@ class App < Sinatra::Base
         @denied << issue
       end
     end
-    PusherEvent.new('ptk', {
+    PusherEvent.record('ptk', {
       accepted: @accepted.collect{|i| { number: i['number'], reason: i['reason'] } },
       denied: @denied.collect{|i| { number: i['number'], reason: i['reason'] } }
     })
@@ -285,7 +289,7 @@ class App < Sinatra::Base
       comment = { :body => "#{github_user.login} changed state: #{original_state} -> #{params['label']}" }
       github_raw_request(:post, "repos/#{OWNER}/#{REPO}/issues/#{params['num']}/comments", comment)
     end
-    PusherEvent.new('change_issue', { 
+    PusherEvent.record('change_issue', {
       issue: {
         num: params['num'],
         title: issue['title'],
