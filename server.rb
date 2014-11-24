@@ -198,6 +198,7 @@ class App < Sinatra::Base
   end
   
   get '/labels.js' do
+    authenticate!
     labels = github_request(:get, "repos/#{OWNER}/#{REPO}/labels", { :per_page => 100 })
     content_type "application/javascript"
     return "var labels = #{JSON.dump(labels)}"
